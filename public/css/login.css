@@ -1,0 +1,165 @@
+@font-face {
+    font-family: 'Nine by Five';
+    src: url('/nine0.ttf'); 
+}
+
+body {
+    font-family: 'Nine by Five';
+    background-image: url("/images/bg.png");
+    background-repeat: no-repeat;
+    background-position: center top;
+    background-size: cover;
+    margin: 0;
+    min-height: 100vh;
+}
+
+.whole {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start; 
+    position: relative;
+    z-index: 1;
+    width: max(960px, 62.5vw);
+    min-height: max(592px, 38.5416666667vw);
+    margin: 0 auto;
+    padding-top: 20px; 
+}
+
+
+.logbox{
+    z-index: 2;
+}
+
+.logbox img {
+    width: 500px; 
+    height: auto;
+    display: block;
+}
+
+.logo {
+    margin-bottom: -170px; 
+    z-index: 3;
+}
+
+.logo img {
+    width: 850px; 
+    height: auto;
+    display: block;
+}
+
+.username {
+    position: relative; 
+    margin-top: -483px; 
+    margin-left: -20px; 
+    width: 300px; 
+    z-index: 4;
+}
+
+.username input {
+    width: 100%;
+    padding: 15px 10px;
+    font-size: 40px;
+    background: transparent;
+    border: none; 
+    color: white;
+    font-family: 'Nine by Five', sans-serif;
+    letter-spacing: 2px;
+    outline: none;
+    box-shadow: transparent;
+}
+
+.username input::placeholder {
+    color: rgba(255, 255, 255, 0.493);
+    font-family: 'Nine by Five', sans-serif;
+    letter-spacing: 2px;
+    font-size: 40px;
+}
+
+.username input:focus {
+    border: none; 
+    background: transparent;
+    box-shadow: transparent;
+}
+
+
+.password {
+    position: relative; 
+    margin-top: 53px; 
+    margin-left: -20px; 
+    width: 300px; 
+    z-index: 5;
+}
+
+.password input {
+    width: 100%;
+    padding: 15px 10px;
+    font-size: 40px;
+    background: transparent;
+    border: none; 
+    color: white;
+    font-family: 'Nine by Five', sans-serif;
+    letter-spacing: 2px;
+    outline: none;
+    box-shadow: transparent;
+}
+
+.password input::placeholder {
+    color: rgba(255, 255, 255, 0.493);
+    font-family: 'Nine by Five', sans-serif;
+    letter-spacing: 2px;
+    font-size: 40px;
+}
+
+.password input:focus {
+    border: none; 
+    background: transparent;
+    box-shadow: transparent;
+}
+.register {
+    position: relative;    
+    margin-top: 185px;    
+    margin-left: 125px;    
+    width: 300px;
+    z-index: 9;
+}
+
+.register a {
+    text-decoration: none;
+    display: block;
+    width: 100%;
+}
+
+.register h1 {
+    font-family: 'Nine by Five', sans-serif;
+    color: white;
+    font-size: 25px;
+    margin: 0;
+    padding: 0;
+    letter-spacing: 2px;
+    text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+    white-space: nowrap;
+    width: 100%;
+}
+
+.register h1:hover {
+    text-shadow: 0 0 15px rgba(255, 255, 255, 0.8);
+}
+
+.active {
+    margin-top: -148px;
+    margin-left: -270px;
+    width: 300px;
+    z-index: 11;
+    display: none;
+    transition: all 0.3s ease;
+    /* NO HEIGHT:0, NO POSITION:ABSOLUTE */
+}
+
+.active img {
+    display: block;
+    width: 550px;
+    height: auto;
+    margin-left: 8px;
+    cursor: pointer;
+}

@@ -1,0 +1,30 @@
+[{
+    "_id": 1,
+    "room_name": "GK101",
+    "open_time": "0800",
+    "close_time": "2000"
+},
+{
+    "_id": 2,
+    "room_name": "GK102",
+    "open_time": "0800",
+    "close_time": "2000"
+},
+{
+    "_id": 3,
+    "room_name": "GK103",
+    "open_time": "0800",
+    "close_time": "2000"
+},
+{
+    "_id": 4,
+    "room_name": "GK104",
+    "open_time": "0800",
+    "close_time": "2000"
+},
+{
+    "_id": 5,
+    "room_name": "GK105",
+    "open_time": "0800",
+    "close_time": "2000"
+}]

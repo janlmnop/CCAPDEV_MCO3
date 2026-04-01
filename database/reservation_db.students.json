@@ -1,0 +1,50 @@
+[{
+  "_id": 12300001,
+  "name": "Hornet Silksong",
+  "email_add": "hornet_silksong@dlsu.edu.ph",
+  "college_code": "CCS",
+  "course_code": "BS-IS",
+  "bio": "hello world!",
+  "password": "12345678",
+  "profile_img": "hornet_silksong.jpeg"
+},
+{
+  "_id": 12300002,
+  "name": "Lace Silksong",
+  "email_add": "lace_silksong@dlsu.edu.ph",
+  "college_code": "RVRCOB",
+  "course_code": "BS-ENT",
+  "bio": "sample",
+  "password": "87654321",
+  "profile_img": "lace_silksong.png"
+},
+{
+  "_id": 12300003,
+  "name": "Bell Beast",
+  "email_add": "bell_beast@dlsu.edu.ph",
+  "college_code": "CLA",
+  "course_code": "ABBHS",
+  "bio": "love to learn!",
+  "password": "test",
+  "profile_img": "bell_beast.png"
+},
+{
+  "_id": 12300004,
+  "name": "Green Prince",
+  "email_add": "green_prince@dlsu.edu.ph",
+  "college_code": "GCOE",
+  "course_code": "BS-CHY",
+  "bio": "guardian of the emerald forest",
+  "password": "password",
+  "profile_img": "green_prince.png"
+},
+{
+  "_id": 12300005,
+  "name": "Skarrsinger Karmelitag",
+  "email_add": "skarrsinger_karmelitag@dlsu.edu.ph",
+  "college_code": "BAGCED",
+  "course_code": "BSE",
+  "bio": "a voice carried by steel and shadow",
+  "password": "hello123",
+  "profile_img": "skarrsinger_karmelitag.png"
+}]

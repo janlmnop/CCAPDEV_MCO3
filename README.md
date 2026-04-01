@@ -1,7 +1,7 @@
 # CCAPDEV_MCO3
 Lab Reservation Web App
 
-## How to install dependencies
+## How to install dependencies . ݁₊ ⊹
 ```
 npm install express mongoose
 ```
@@ -18,8 +18,31 @@ How to run the application locally
    ```
 
 ---
+## How to add to this repo (via terminal) . ݁₊ ⊹
+1. Navigate to your project folder
 
-## Project Structure
+2. Pull the latest version
+```
+git pull https://github.com/janlmnop/CCAPDEV_MCO3.git
+```
+
+3. Add the files you changed
+```
+git add <file(s)>
+```
+
+4. Add a commit message
+```
+git commit -m "some message"
+```
+
+5. Push changes to remote repository (directly to main branch)
+```
+git push origin main
+```
+
+---
+## Project Structure . ݁₊ ⊹
 
 ```text
 CCAPDEV_MCO3/

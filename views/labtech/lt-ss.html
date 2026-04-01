@@ -1,0 +1,202 @@
+<html>
+
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+	
+	<title>Student Search</title>
+    <link rel="stylesheet" href="/css/lt-rc.css">
+</head>
+
+<body>
+	<!-- side navigation -->
+	<div class="sidenav">
+		<img src="/images/logo copy.png" />
+		<div class="links">
+			<div>
+				<a href="/views/labtech//mainmenu_labtech.html">Home</a>
+				<a href="/views/labtech/lt-vr-ls.html">View Reservations</a>
+				<a href="" style="font-weight: bold;">Student Search</a>
+				<a href="/views/labtech//userprofile_labtech.html">View User Profile</a>
+			</div>
+			<button class="back-btn" onclick="history.back()">&lt; back</button>
+		</div>  
+	</div>
+
+    <div class="container">
+	
+        <div class="header">
+            <p class="title">Student Search</p>
+        </div>
+
+        <div class="main-content">
+		
+            <div class="panel right-panel">
+				<div class="search-header">
+                    <p class="search-title">Search student by name:</p>
+					<input type="text" class="student-name" id="student-name" placeholder="Input first or last name">
+					<button class="search-btn" id="search-btn">Search</button>
+                </div>
+				
+                <div class="search-body">
+				
+					<div class="search-table">
+						<p class="res-title">Students found:</p>
+						
+						<div class="search" id="search-results">
+							<!-- populated by JS -->
+						</div>
+						
+						<div class="sched-navigation">
+							<p class="prev" id="prev">Prev</p>
+							<p class="next" id="next">Next</p>
+						</div>
+					</div>
+					
+				</div>
+            </div>
+			
+        </div>
+    </div>
+
+	<script>
+		const API_BASE = "http://localhost:3000/api";
+		const RESULTS_PER_PAGE = 6;
+
+		let allResults = [];
+		let currentPage = 0;
+
+		const searchInput  = document.getElementById("student-name");
+		const searchBtn    = document.getElementById("search-btn");
+		const resultsDiv   = document.getElementById("search-results");
+		const prevBtn      = document.getElementById("prev");
+		const nextBtn      = document.getElementById("next");
+
+		// ── SEARCH ──
+		searchBtn.addEventListener("click", async function () {
+			const name = searchInput.value.trim();
+			if (!name) return;
+
+			try {
+				const res  = await fetch(`${API_BASE}/students/search?name=${encodeURIComponent(name)}`);
+				const data = await res.json();
+
+				if (!res.ok) {
+					showMessage(data.message || "Search failed.");
+					return;
+				}
+
+				allResults  = data;
+				currentPage = 0;
+				renderPage();
+			} catch (err) {
+				showMessage("Could not connect to server. Make sure it is running.");
+			}
+		});
+
+		// also search on Enter key
+		searchInput.addEventListener("keydown", function (e) {
+			if (e.key === "Enter") searchBtn.click();
+		});
+
+		// ── RENDER PAGE ──
+		function renderPage() {
+			resultsDiv.innerHTML = "";
+
+			if (allResults.length === 0) {
+				showMessage("No students found.");
+				updateNavButtons();
+				return;
+			}
+
+			const start = currentPage * RESULTS_PER_PAGE;
+			const end   = Math.min(start + RESULTS_PER_PAGE, allResults.length);
+			const slice = allResults.slice(start, end);
+
+			slice.forEach(function (student) {
+				const row = document.createElement("div");
+				row.classList.add("search-results");
+
+				// show name, or "Anonymous" if no name set yet
+				const displayName = student.name && student.name.trim() !== ""
+					? student.name
+					: `ID: ${student._id}`;
+
+				row.innerHTML = `
+					<div class="result-name">${displayName}</div>
+					<div class="result-btns">
+						<button class="create-res"  data-id="${student._id}">Create Reservation</button>
+						<button class="view-prof"   data-id="${student._id}">View User Profile</button>
+						<button class="view-res"    data-id="${student._id}">View Reservations</button>
+					</div>
+				`;
+
+				// Create Reservation → go to lt-rc-ls with for_student param
+				row.querySelector(".create-res").addEventListener("click", function () {
+					const sid = this.getAttribute("data-id");
+					window.location.href = `/views/labtech/lt-rc-ls.html?for_student=${sid}`;
+				});
+
+				// View User Profile → go to other student profile page
+				row.querySelector(".view-prof").addEventListener("click", function () {
+					const sid = this.getAttribute("data-id");
+					window.location.href = `/views/labtech//userprofile_student_other.html?student_id=${sid}`;
+				});
+
+				// View Reservations → go to reservations page for that student
+				row.querySelector(".view-res").addEventListener("click", function () {
+					const sid = this.getAttribute("data-id");
+					window.location.href = `/views/shared/reservations_current.html?view_student=${sid}`;
+					// before
+					// window.location.href = `../../reservations/user-reservations/reservations_current.html?view_student=${sid}`;
+				});
+
+				resultsDiv.appendChild(row);
+			});
+
+			updateNavButtons();
+		}
+
+		// ── NAV BUTTONS ──
+		function updateNavButtons() {
+			const totalPages = Math.ceil(allResults.length / RESULTS_PER_PAGE);
+
+			if (currentPage > 0) {
+				prevBtn.classList.add("enabled");
+			} else {
+				prevBtn.classList.remove("enabled");
+			}
+
+			if (currentPage < totalPages - 1) {
+				nextBtn.classList.add("enabled");
+			} else {
+				nextBtn.classList.remove("enabled");
+			}
+		}
+
+		prevBtn.addEventListener("click", function () {
+			if (currentPage > 0) {
+				currentPage--;
+				renderPage();
+			}
+		});
+
+		nextBtn.addEventListener("click", function () {
+			const totalPages = Math.ceil(allResults.length / RESULTS_PER_PAGE);
+			if (currentPage < totalPages - 1) {
+				currentPage++;
+				renderPage();
+			}
+		});
+
+		// ── HELPER ──
+		function showMessage(msg) {
+			resultsDiv.innerHTML = `
+				<div class="search-results" style="justify-content:center;">
+					<div class="result-name">${msg}</div>
+				</div>`;
+		}
+	</script>
+	
+</body>
+
+</html>

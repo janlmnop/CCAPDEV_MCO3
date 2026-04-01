@@ -1,0 +1,154 @@
+<!-- RegistrationPageLabTech.html -->
+<!DOCTYPE HTML>
+<html>
+    <head>
+        <title>Lab Tech Registration</title>
+        <link rel="stylesheet" type="text/css" media="all" href="/css/registration.css">
+    </head>
+
+    <body>
+        <div class="whole">
+            <div class="logo"> 
+                <img src="/images/logo.png">
+            </div>
+
+            <div class="regbox">
+                <img src="/images/regbox.png">
+            </div>
+
+            <div class="username">
+                <input type="number" id="employeeId" placeholder="EMPLOYEE ID"/>
+            </div>
+
+            <div class="email"> 
+                <input type="email" id="email" placeholder="EMAIL ADDRESS"/>
+            </div>
+
+            <div class="password">
+                <input type="password" id="password" placeholder="PASSWORD"/>
+            </div>
+
+            <div class="confirm">
+                <input type="password" id="confirmPassword" placeholder="CONFIRM PASSWORD"/>
+            </div>
+
+            <!-- Back to dashboard instead of login -->
+            <div class="dashboard">
+                <a href="/views/labtech/mainmenu_labtech.html" target="_self">
+                    <h1>Back to Dashboard</h1>
+                </a>
+            </div>
+
+            <div class="join" id="joinButton">
+                <img src="/images/joinbutton.png" alt="Create Account">
+            </div>
+        </div>
+
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                const user = JSON.parse(localStorage.getItem('user') || '{}');
+                const userType = localStorage.getItem('userType');
+                
+                if (userType !== 'labtech') {
+                    alert('Access denied. Only lab technicians can create new lab tech accounts.');
+                    window.location.href = '/views/shared/login.html';
+                    return;
+                }
+                
+                const employeeId    = document.getElementById('employeeId');
+                const email         = document.getElementById('email');
+                const password      = document.getElementById('password');
+                const confirmPassword = document.getElementById('confirmPassword');
+                const joinButton    = document.getElementById('joinButton');
+                
+                joinButton.style.display = 'none';
+                
+                function validateForm() {
+                    if (password.value === confirmPassword.value && password.value !== '') {
+                        confirmPassword.style.borderBottom = '2px solid green';
+                        password.style.borderBottom = '2px solid green';
+                    } else if (confirmPassword.value === '') {
+                        confirmPassword.style.borderBottom = 'none';
+                        password.style.borderBottom = 'none';
+                    } else {
+                        confirmPassword.style.borderBottom = '2px solid red';
+                        password.style.borderBottom = '2px solid red';
+                    }
+
+                    const isIdFilled      = employeeId.value.trim() !== '';
+                    const isEmailFilled   = email.value.trim() !== '';
+                    const isValidEmail    = email.value.includes('@') && email.value.includes('.');
+                    const isPasswordFilled = password.value !== '';
+                    const isConfirmFilled = confirmPassword.value !== '';
+                    const doPasswordsMatch = password.value === confirmPassword.value;
+                    
+                    if (isIdFilled && isEmailFilled && isValidEmail && isPasswordFilled && isConfirmFilled && doPasswordsMatch) {
+                        joinButton.style.display = 'block';
+                    } else {
+                        joinButton.style.display = 'none';
+                    }
+                }
+                
+                async function registerLabTech() {
+                    joinButton.style.pointerEvents = 'none';
+                    joinButton.style.opacity = '0.5';
+                    
+                    try {
+                        const response = await fetch('http://localhost:3000/api/auth/register/labtech', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({
+                                employeeId:      employeeId.value.trim(),
+                                email:           email.value.trim(),
+                                password:        password.value,
+                                confirmPassword: confirmPassword.value
+                            })
+                        });
+                        
+                        const data = await response.json();
+                        
+                        if (response.ok && data.success) {
+                            window.location.href = '/views/labtech/mainmenu_labtech.html';
+                        } else {
+                            showError(data.message || 'Registration failed.');
+                            joinButton.style.pointerEvents = 'auto';
+                            joinButton.style.opacity = '1';
+                        }
+                    } catch (error) {
+                        console.error('Error:', error);
+                        showError('Network error. Make sure the server is running.');
+                        joinButton.style.pointerEvents = 'auto';
+                        joinButton.style.opacity = '1';
+                    }
+                }
+
+                function showError(msg) {
+                    document.getElementById('error-popup-msg').textContent = msg;
+                    document.getElementById('error-popup').style.display = 'flex';
+                }
+
+                document.getElementById('error-popup-ok').addEventListener('click', function () {
+                    document.getElementById('error-popup').style.display = 'none';
+                });
+                
+                employeeId.addEventListener('keyup', validateForm);
+                email.addEventListener('keyup', validateForm);
+                password.addEventListener('keyup', validateForm);
+                confirmPassword.addEventListener('keyup', validateForm);
+                joinButton.addEventListener('click', registerLabTech);
+                
+                validateForm();
+            });
+        </script>
+        <!-- Error popup -->
+        <div id="error-popup" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:999; justify-content:center; align-items:center;">
+            <div style="background:#1e1a3a; border:3px solid #7962c8; border-radius:16px; padding:40px 50px; text-align:center; max-width:400px;">
+                <p id="error-popup-msg" style="color:#ff6b6b; font-family:'Nine by Five',sans-serif; font-size:22px; margin-bottom:24px;"></p>
+                <button id="error-popup-ok" style="background:#7962c8; color:white; border:none; border-radius:50px; padding:10px 40px; font-family:'Nine by Five',sans-serif; font-size:20px; cursor:pointer;">OK</button>
+            </div>
+        </div>
+        <style>
+            #error-popup-ok:hover { background: #9a7fe0; }
+        </style>
+    </body>
+</html>

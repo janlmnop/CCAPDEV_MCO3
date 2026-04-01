@@ -1,0 +1,147 @@
+<!DOCTYPE HTML>
+<html>
+    <head>
+        <title>Registration Page</title>
+        <link rel="stylesheet" type="text/css" media="all" href="/css/registration.css">
+    </head>
+
+    <body>
+        <div class="whole">
+            <div class="logo"> 
+                <img src="/images/logo.png"></img> 
+            </div>
+
+            <div class="regbox">
+                <img src="/images/regbox.png"></img>
+            </div>
+
+            <div class="username">
+                <input type="text" id="username" placeholder="STUDENT ID"/>
+            </div>
+
+            <div class="email"> 
+                <input type="email" id="email" placeholder="EMAIL ADDRESS"/>
+            </div>
+
+            <div class="password">
+                <input type="password" id="password" placeholder="PASSWORD"/>
+            </div>
+
+            <div class="confirm">
+                <input type="password" id="confirmPassword" placeholder="CONFIRM PASSWORD"/>
+            </div>
+
+            <div class="login">
+                <a href="/views/shared/login.html" target="_self">
+                    <h1>Back to Login</h1>
+                </a>
+            </div>
+
+            <div class="join" id="joinBtn">
+                <img src="/images/joinbutton.png" id="join-img" style="cursor:pointer;"></img>
+            </div>
+        </div>
+
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                const usernameInput  = document.getElementById('username');
+                const emailInput     = document.getElementById('email');
+                const passwordInput  = document.getElementById('password');
+                const confirmInput   = document.getElementById('confirmPassword');
+                const joinBtn        = document.getElementById('joinBtn');
+                const joinImg        = document.getElementById('join-img');
+                const errorPopup     = document.getElementById('error-popup');
+                const errorPopupMsg  = document.getElementById('error-popup-msg');
+                const errorPopupOk   = document.getElementById('error-popup-ok');
+
+                joinBtn.style.display = 'none';
+
+                function validateAll() {
+                    if (passwordInput.value === confirmInput.value && passwordInput.value !== '') {
+                        confirmInput.style.borderBottom  = '2px solid green';
+                        passwordInput.style.borderBottom = '2px solid green';
+                    } else if (confirmInput.value === '') {
+                        confirmInput.style.borderBottom  = 'none';
+                        passwordInput.style.borderBottom = 'none';
+                    } else {
+                        confirmInput.style.borderBottom  = '2px solid red';
+                        passwordInput.style.borderBottom = '2px solid red';
+                    }
+
+                    const userFilled    = usernameInput.value.trim() !== '';
+                    const emailFilled   = emailInput.value.trim() !== '';
+                    const validEmail    = emailInput.value.includes('@') && emailInput.value.includes('.');
+                    const passFilled    = passwordInput.value !== '';
+                    const confirmFilled = confirmInput.value !== '';
+                    const passMatch     = passwordInput.value === confirmInput.value;
+
+                    if (userFilled && emailFilled && validEmail &&
+                        passFilled && confirmFilled && passMatch) {
+                        joinBtn.style.display = 'block';
+                    } else {
+                        joinBtn.style.display = 'none';
+                    }
+                }
+
+                [usernameInput, emailInput, passwordInput, confirmInput]
+                    .forEach(el => el.addEventListener('keyup', validateAll));
+
+                joinImg.addEventListener('click', attemptRegister);
+
+                async function attemptRegister() {
+                    const studentId        = usernameInput.value.trim();
+                    const email           = emailInput.value.trim();
+                    const password        = passwordInput.value;
+                    const confirmPassword = confirmInput.value;
+
+                    joinImg.style.opacity       = '0.5';
+                    joinImg.style.pointerEvents = 'none';
+
+                    try {
+                        const response = await fetch('http://localhost:3000/api/auth/register/student', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ studentId, email, password, confirmPassword })
+                        });
+
+                        const data = await response.json();
+
+                        if (response.ok && data.success) {
+                            window.location.href = '/views/shared/welcomeNew.html';
+                        } else {
+                            showError(data.message || 'Registration failed. Please try again.');
+                        }
+
+                    } catch (err) {
+                        showError('Could not connect to server. Make sure it is running.');
+                    } finally {
+                        joinImg.style.opacity       = '1';
+                        joinImg.style.pointerEvents = 'auto';
+                    }
+                }
+
+                function showError(msg) {
+                    errorPopupMsg.textContent = msg;
+                    errorPopup.style.display  = 'flex';
+                }
+
+                errorPopupOk.addEventListener('click', function () {
+                    errorPopup.style.display = 'none';
+                });
+
+                validateAll();
+            });
+        </script>
+        <!-- Error popup -->
+        <div id="error-popup" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:999; justify-content:center; align-items:center;">
+            <div style="background:#1e1a3a; border:3px solid #7962c8; border-radius:16px; padding:40px 50px; text-align:center; max-width:400px;">
+                <p id="error-popup-msg" style="color:#ff6b6b; font-family:'Nine by Five',sans-serif; font-size:22px; margin-bottom:24px;"></p>
+                <button id="error-popup-ok" style="background:#7962c8; color:white; border:none; border-radius:50px; padding:10px 40px; font-family:'Nine by Five',sans-serif; font-size:20px; cursor:pointer;">OK</button>
+            </div>
+        </div>
+
+        <style>
+            #error-popup-ok:hover { background: #9a7fe0; }
+        </style>
+    </body>
+</html>

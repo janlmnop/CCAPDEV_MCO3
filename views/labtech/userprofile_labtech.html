@@ -1,0 +1,121 @@
+<!------------------------------------------------------
+    User Profile (Lab Tech)
+
+    [ ] add link to student search
+------------------------------------------------------->
+
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>User Profile (Lab Tech)</title>
+        <link rel="stylesheet" href="/css/user-profiles.css">
+    </head>
+
+    <body>
+        <div class="sidenav">
+            <img src="/images/logo.png" />
+            <div class="links">
+                <div>
+                    <a href="/views/labtech/mainmenu_labtech.html">Home</a>
+                    <a href="/views/labtech/lt-rc-cs.html">Manage Reservations</a>
+                    <a href="/views/labtech/lt-ss.html">Student Search</a>
+                    <a href="" style="font-weight: bold;">View User Profile</a>
+                </div>
+                <a href="" onclick="window.history.back(); return false;">&lt; back</a>
+            </div>  
+        </div>
+        
+        <div class="up-container">
+            <h1>User Profile</h1>
+
+            <div class="up-maincontent">
+                <div class="up-leftpanel">
+                    <img src="/images/Jane.jpg" class="up-profilepic" id="profile-pic" />
+                </div>
+
+                <div class="up-rightpanel">
+                    <img src="/images/tab.png" class="up-tabimg" />
+                    
+                    <div class="up-infocontainer">
+                        <div class="up-userinfo">
+                            <table class="up-info">
+                                <tr><td>Name:</td><td id="view-name">Loading...</td></tr>
+                                <tr><td>ID:</td><td id="view-id">Loading...</td></tr>
+                                <tr><td>Email:</td><td id="view-email">Loading...</td></tr>
+                                <tr><td>Job Title:</td><td id="view-job">Loading...</td></tr>
+                                <tr><td>Bio:</td><td id="view-bio">Loading...</td></tr>
+                            </table>
+                        </div>
+
+                        <div class="up-actions">
+                            <button class="up-editbtn">Edit
+                                <img src="/images/edit.png" class="up-icon" />
+                            </button>
+
+                            <button class="up-deletebtn">Delete Account
+                                <img src="/images/bin.png" class="up-icon" />
+                            </button>
+
+                            <br><br>
+                            <button class="up-editbtn" onclick="window.location.href='/views/labtech/RegistrationPageLabTech.html'">+ Add Lab Tech Profile</button>
+                        </div>
+                    </div>
+
+                    <div class="up-tablabels">
+                        <p>User Information</p>
+                        <a href="/views/shared/reservations_current.html" class="up-reservationslink">View Reservations</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Edit Account Popup -->
+            <div class="up-popup-container-edit">
+                <div class="up-popup-box-edit">
+                    <h2>Edit Account Details</h2>
+                    <form id="edit-form">
+                        <table>
+                            <tr>
+                                <td><label for="name">New Name:</label></td>
+                                <td><input type="text" id="edit-name" name="name" size="40" maxlength="50"></td>
+                            </tr>
+                            <tr>
+                                <td><label for="email">New Email:</label></td>
+                                <td><input type="text" id="edit-email" name="email" size="40" maxlength="50"></td>
+                            </tr>
+                            <tr>
+                                <td><label for="job">Job Title:</label></td>
+                                <td><input type="text" id="edit-job" name="job" size="40" maxlength="50"></td>
+                            </tr>
+                            <tr>
+                                <td><label for="bio">New Bio:</label></td>
+                                <td><textarea id="edit-bio" name="bio" rows="3" cols="4"></textarea></td>
+                            </tr>
+                            <tr>
+                                <td><label for="profile_img">Profile Image:</label></td>
+                                <td><input type="text" id="edit-profile-img" name="profile-img" size="40" max="50"></td>
+                            </tr>
+                        </table>
+                        <div class="up-popup-buttons-edit">
+                            <button type="button" class="backbtn-edit">Back</button>
+                            <button type="button" class="submitbtn-edit">Submit</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Delete Account Popup -->
+            <div class="up-popup-container-delete">
+                <div class="up-popup-box-delete">
+                    <h2>Delete Account</h2>
+                    <p>Would you like to delete your account?</p>
+                    <div class="up-popup-buttons-delete">
+                        <button class="backbtn-delete">No. Take me back!</button>
+                        <button class="submitbtn-delete">Yes, delete my account!</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <script src="/js/script_labtech.js"></script>
+    </body>
+</html>

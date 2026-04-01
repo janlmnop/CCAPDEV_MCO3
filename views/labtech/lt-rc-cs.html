@@ -1,0 +1,198 @@
+<html>
+
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+	
+    <link rel="stylesheet" href="/css/lt-rc.css">
+</head>
+
+<body>
+	<div class="sidenav">
+		<img src="/images/logo copy.png" />
+		<div class="links">
+			<div>
+				<a href="/views/labtech/mainmenu_labtech.html">Home</a>
+				<a href="/views/labtech/lt-vr-ls.html">View Reservations</a>
+				<a href="/views/labtech/lt-ss.html">Student Search</a>
+				<a href="/views/labtech/userprofile_labtech.html">View User Profile</a>
+			</div>
+			<button class="back-btn" onclick="history.back()">&lt; back</button>
+		</div>  
+	</div>
+
+    <div class="container">
+	
+        <div class="header">
+		
+            <p class="title">Reserve Computer</p>
+            <p class="subtitle">Select preferred computer or set reservation details.</p>
+			
+        </div>
+
+        <div class="main-content">
+		
+            <div class="panel left-panel">
+				<div class="panel-title">
+					<p>Reservation Details</p>
+				</div>
+				
+				<div class="panel-content">
+					<div class="res-details">
+						<div class="row date">
+							<label for="date">Date:</label>
+							<select class="res-date enabled" id="res-date">
+								<option value="">Select date</option>
+							</select>
+						</div>
+						
+						<div class="row time">
+							<label>Start time: </label>
+							<select class="res-time enabled" id="start-time">
+								<option value="">Select start time</option>
+							</select>
+						</div>
+						
+						<div class="row time">
+							<label>End time: </label>
+							<select class="res-time enabled" id="end-time">
+								<option value="">Select end time</option>
+							</select>
+						</div>
+					</div>
+					
+					<div class="check">
+						<button class="avail-btn enabled">Check availability</button>
+						
+						<button class="avail-btn">Reset filter</button>
+					</div>
+				</div>
+            </div>
+			
+			<div class="vl"></div>
+			
+            <div class="panel right-panel">
+				<div class="panel-header">
+                    <p class="panel-title" id="panel-title"></p>
+                </div>
+				
+                <div class="panel-body">
+					<div class="comp-pair">
+						<div class="comp l1">
+							<div class="comp-icon-frame">
+								<img src="/images/comp logo.png" class="comp-icon"/>
+							</div>
+							
+							<div class="comp-title">
+								<p><a href="/views/labtech/lt-rc-cs-c.html" data-comp="1">Comp 1</a></p>
+							</div>
+						</div>
+						
+						<div class="comp l2">
+							<div class="comp-icon-frame">
+								<img src="/images/comp logo.png" class="comp-icon"/>
+							</div>
+							
+							<div class="comp-title">
+								<p><a href="/views/labtech/lt-rc-cs-c.html" data-comp="2">Comp 2</a></p>
+							</div>
+						</div>
+					</div>
+
+					<div class="comp-pair">
+						<div class="comp l3">
+							<div class="comp-icon-frame">
+								<img src="/images/comp logo.png" class="comp-icon"/>
+							</div>
+							
+							<div class="comp-title">
+								<p><a href="/views/labtech/lt-rc-cs-c.html" data-comp="3">Comp 3</a></p>
+							</div>
+						</div>
+						
+						<div class="comp l4">
+							<div class="comp-icon-frame">
+								<img src="/images/comp logo.png" class="comp-icon"/>
+							</div>
+							
+							<div class="comp-title">
+								<p><a href="/views/labtech/lt-rc-cs-c.html" data-comp="4">Comp 4</a></p>
+							</div>
+						</div>
+					</div>
+					
+					<div class="comp-pair">
+						<div class="comp l5">
+							<div class="comp-icon-frame">
+								<img src="/images/comp logo.png" class="comp-icon"/>
+							</div>
+							
+							<div class="comp-title">
+								<p><a href="/views/labtech/lt-rc-cs-c.html" data-comp="5">Comp 5</a></p>
+							</div>
+						</div>
+						
+						<div class="comp l6">
+							<div class="comp-icon-frame">
+								<img src="/images/comp logo.png" class="comp-icon"/>
+							</div>
+							
+							<div class="comp-title">
+								<p><a href="/views/labtech/lt-rc-cs-c.html" data-comp="6">Comp 6</a></p>
+							</div>
+						</div>
+					</div>
+						
+					<div class="comp-pair">
+						<div class="comp l7">
+							<div class="comp-icon-frame">
+								<img src="/images/comp logo.png" class="comp-icon"/>
+							</div>
+							
+							<div class="comp-title">
+								<p><a href="/views/labtech/lt-rc-cs-c.html" data-comp="7">Comp 7</a></p>
+							</div>
+						</div>
+						
+						<div class="comp l8">
+							<div class="comp-icon-frame">
+								<img src="/images/comp logo.png" class="comp-icon"/>
+							</div>
+							
+							<div class="comp-title">
+								<p><a href="/views/labtech/lt-rc-cs-c.html" data-comp="8">Comp 8</a></p>
+							</div>
+						</div>
+					</div>
+					
+					<div class="comp-pair">
+						<div class="comp l9">
+							<div class="comp-icon-frame">
+								<img src="/images/comp logo.png" class="comp-icon"/>
+							</div>
+							
+							<div class="comp-title">
+								<p><a href="/views/labtech/lt-rc-cs-c.html" data-comp="9">Comp 9</a></p>
+							</div>
+						</div>
+						
+						<div class="comp l10">
+							<div class="comp-icon-frame">
+								<img src="/images/comp logo.png" class="comp-icon"/>
+							</div>
+							
+							<div class="comp-title">
+								<p><a href="/views/labtech/lt-rc-cs-c.html" data-comp="10">Comp 10</a></p>
+							</div>
+						</div>
+					</div>
+				</div>
+            </div>
+			
+        </div>
+    </div>
+	
+	<script src="/js/lt-rc.js"></script>
+	
+</body>
+
+</html>

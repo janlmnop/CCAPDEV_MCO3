@@ -1,0 +1,64 @@
+<!------------------------------------------
+    USER PROFILE (Other Student) — read only
+    Loaded when a lab tech clicks "View User Profile"
+    from student search. Reads student_id from URL.
+------------------------------------------->
+
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>User Profile (Student)</title>
+        <link rel="stylesheet" href="/css/user-profile.css">
+    </head>
+
+    <body>
+        <!-- side navigation -->
+        <div class="sidenav">
+            <img src="images/logo.png" />
+            <div class="links">
+                <div>
+                    <a href="/views/student/mainmenu_student.html">Home</a>
+                    <a href="/views/student/lt-vr-ls.html">View Reservations</a>
+                    <a href="/views/student/lt-ss.html">Student Search</a>
+                    <a href="/views/other-student/userprofile_student_other.html">View User Profile</a>
+                </div>
+                <a href="" onclick="window.history.back(); return false;">&lt; back</a>
+            </div>
+        </div>
+
+        <div class="up-container">
+            <h1>User Profile</h1>
+
+            <div class="up-maincontent">
+                <div class="up-leftpanel">
+                    <img src="/images/default.jpeg" class="up-profilepic" id="profile-pic" />
+                </div>
+
+                <div class="up-rightpanel">
+                    <img src="/images/tab.png" class="up-tabimg" />
+
+                    <div class="up-infocontainer">
+                        <div class="up-userinfo">
+                            <table class="up-info">
+                                <tr><td>Name:</td>        <td id="view-name">Loading...</td></tr>
+                                <tr><td>ID:</td>          <td id="view-id">Loading...</td></tr>
+                                <tr><td>Email:</td>       <td id="view-email">Loading...</td></tr>
+                                <tr><td>College Code:</td><td id="view-college">Loading...</td></tr>
+                                <tr><td>Course Code:</td> <td id="view-course">Loading...</td></tr>
+                                <tr><td>Bio:</td>         <td id="view-bio">Loading...</td></tr>
+                            </table>
+                        </div>
+                        <!-- no edit/delete buttons — read only -->
+                    </div>
+
+                    <div class="up-tablabels">
+                        <p>User Information</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- only change from original: script_student_other.js instead of script.js -->
+        <script src="/js/script_student_other.js"></script>
+    </body>
+</html>

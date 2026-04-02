@@ -1,5 +1,5 @@
 const API_URL = "http://localhost:3000/api/students";
-const currentStudentId = 12300001;      // NOTE : this should depend on the login
+const currentStudent = JSON.parse(localStorage.getItem("user") || "{}");      // NOTE : this should depend on the login
 
 // elements
 const profilePic = document.getElementById("profile-pic");
@@ -15,7 +15,7 @@ const submitDelete = document.querySelector('.submitbtn-delete');
 // load profile
 async function loadProfile() {
     try {
-        const res = await fetch(`${API_URL}/${currentStudentId}`);
+        const res = await fetch(`${API_URL}/${currentStudent._id}`);
         if (!res.ok) throw new Error("Student not found");
         const data = await res.json();
 
@@ -58,7 +58,7 @@ submitEdit.onclick = async () => {
     };
 
     try {
-        const res = await fetch(`${API_URL}/${currentStudentId}`, {
+        const res = await fetch(`${API_URL}/${currentStudent._id}`, {
             method: "PUT",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(updated)
@@ -77,7 +77,7 @@ submitEdit.onclick = async () => {
 // delete account
 submitDelete.onclick = async () => {
     try {
-        const res = await fetch(`${API_URL}/${currentStudentId}`, { method: "DELETE" });
+        const res = await fetch(`${API_URL}/${currentStudent._id}`, { method: "DELETE" });
         if (!res.ok) throw new Error("Delete failed");
         alert("Account deleted successfully!");
         containerDelete.classList.remove('active');

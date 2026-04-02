@@ -504,6 +504,47 @@ app.delete("/api/reservation/:id", async (req, res) => {
 //  RESERVATION AVAILABILITY ROUTES
 // ════════════════════════════════════════
 
+//mark past reservations as completed
+async function completePastReservations() {
+    try {
+        const now = new Date();
+
+        const currentDate =
+            now.getFullYear() +
+            "-" +
+            String(now.getMonth() + 1).padStart(2, "0") +
+            "-" +
+            String(now.getDate()).padStart(2, "0");
+
+        const currentTime =
+            String(now.getHours()).padStart(2, "0") +
+            String(now.getMinutes()).padStart(2, "0");
+
+        const result = await Reservation.updateMany(
+            {
+                status: "active",
+                $or: [
+                    { date: { $lt: currentDate } },
+                    {
+                        date: currentDate,
+                        end_time: { $lte: currentTime }
+                    }
+                ]
+            },
+            {
+                $set: {
+                    status: "completed",
+                    updated_at: now.toISOString()
+                }
+            }
+        );
+
+        console.log(`${result.modifiedCount || 0} past reservations marked as completed.`);
+    } catch (error) {
+        console.error("Error completing past reservations:", error);
+    }
+}
+
 // GET lab availability for a specific date and time range
 app.get("/api/labs/availability", async (req, res) => {
     try {

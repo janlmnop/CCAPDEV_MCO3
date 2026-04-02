@@ -729,18 +729,67 @@ app.post("/api/reservations", async (req, res) => {
             end_time,
             is_anonymous
         } = req.body;
-		
-		// check for missing input
+
+        // check for missing input
         if (!user_id || !lab_id || !computer_id || !date || !start_time || !end_time) {
             return res.status(400).json({
                 message: "Missing required reservation fields"
             });
         }
-		
-		// in case of trying to reserve the same slot as smn almost at the same time
+
+        const parsedUserId = Number(user_id);
+        const parsedLabId = Number(lab_id);
+        const parsedComputerId = Number(computer_id);
+
+        // check for invalid numeric fields
+        if (
+            !Number.isInteger(parsedUserId) ||
+            !Number.isInteger(parsedLabId) ||
+            !Number.isInteger(parsedComputerId)
+        ) {
+            return res.status(400).json({
+                message: "Invalid reservation identifiers"
+            });
+        }
+
+        // check if user exists
+        const studentExists = await Student.findById(parsedUserId);
+
+        if (!studentExists) {
+            return res.status(404).json({
+                message: "Student account does not exist"
+            });
+        }
+
+        // check if lab exists
+        const labExists = await Lab.findById(parsedLabId);
+
+        if (!labExists) {
+            return res.status(404).json({
+                message: "Selected laboratory does not exist"
+            });
+        }
+
+        // check if computer exists
+        const computerExists = await Computer.findById(parsedComputerId);
+
+        if (!computerExists) {
+            return res.status(404).json({
+                message: "Selected computer does not exist"
+            });
+        }
+
+        // check if computer belongs to selected lab
+        if (Number(computerExists.lab_id) !== parsedLabId) {
+            return res.status(400).json({
+                message: "Selected computer does not belong to the selected laboratory"
+            });
+        }
+
+        // in case of trying to reserve the same slot as smn almost at the same time
         const overlappingReservation = await Reservation.findOne({
-            lab_id: Number(lab_id),
-            computer_id: Number(computer_id),
+            lab_id: parsedLabId,
+            computer_id: parsedComputerId,
             date: date,
             status: "active",
             start_time: { $lt: end_time },
@@ -752,8 +801,8 @@ app.post("/api/reservations", async (req, res) => {
                 message: "Selected slot is already reserved"
             });
         }
-		
-		// increment id
+
+        // increment id
         const latestReservation = await Reservation.findOne().sort({ _id: -1 });
         let nextId = 1;
 
@@ -762,13 +811,13 @@ app.post("/api/reservations", async (req, res) => {
         }
 
         const now = new Date().toISOString();
-		
-		// create and save reservation
+
+        // create and save reservation
         const newReservation = new Reservation({
             _id: nextId,
-            user_id: Number(user_id),
-            lab_id: Number(lab_id),
-            computer_id: Number(computer_id),
+            user_id: parsedUserId,
+            lab_id: parsedLabId,
+            computer_id: parsedComputerId,
             date: date,
             start_time: start_time,
             end_time: end_time,
@@ -791,7 +840,6 @@ app.post("/api/reservations", async (req, res) => {
         });
     }
 });
-
 // ════════════════════════════════════════
 //  SERVER
 // ════════════════════════════════════════

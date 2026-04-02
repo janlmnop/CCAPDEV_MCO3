@@ -3,7 +3,7 @@ const API_BASE = "http://localhost:3000/api";
 // get student_id from URL query param
 // e.g. userprofile_student_other.html?student_id=12300001
 const params    = new URLSearchParams(window.location.search);
-const studentId = parseInt(params.get("student_id"), 10);
+const studentId = JSON.parse(localStorage.getItem("user") || "{}");
 
 if (!studentId) {
     alert("No student ID provided.");
@@ -15,7 +15,7 @@ const profilePic = document.getElementById("profile-pic");
 // load profile — read only, no edit/delete
 async function loadProfile() {
     try {
-        const res = await fetch(`${API_BASE}/students/${studentId}`);
+        const res = await fetch(`${API_BASE}/students/${studentId._id}`);
         if (!res.ok) throw new Error("Student not found");
         const data = await res.json();
 

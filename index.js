@@ -12,7 +12,15 @@ app.use(express.json());
 
 // ── DATABASE CONNECTION ──
 mongoose.connect("mongodb://127.0.0.1:27017/reservation_db")
-    .then(() => console.log("MongoDB connected"))
+	.then(() => {
+		console.log("MongoDB connected");
+
+		// change past reservation status to completed every 10 mins
+        completePastReservations();
+        setInterval(() => {
+            completePastReservations();
+        }, 10 * 60 * 1000);
+    })
     .catch(err => console.log(err));
 
 // ── MODELS ──

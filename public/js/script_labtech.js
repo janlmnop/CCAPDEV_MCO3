@@ -1,5 +1,5 @@
 const API_URL = "http://localhost:3000/api/labtech";
-const currentLabTechId = 1;
+const currentLabTech = JSON.parse(localStorage.getItem("user") || "{}");
 
 const profilePic = document.getElementById("profile-pic");
 
@@ -16,7 +16,7 @@ const backDelete = document.querySelector(".backbtn-delete");
 // load profile
 async function loadProfile() {
     try {
-        const res = await fetch(`${API_URL}/${currentLabTechId}`);
+        const res = await fetch(`${API_URL}/${currentLabTech._id}`);
         if (!res.ok) throw new Error("Lab Tech not found");
         const data = await res.json();
 
@@ -57,7 +57,7 @@ submitEdit.onclick = async () => {
     };
 
     try {
-        const res = await fetch(`${API_URL}/${currentLabTechId}`, {
+        const res = await fetch(`${API_URL}/${currentLabTech._id}`, {
             method: "PUT",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(updated)

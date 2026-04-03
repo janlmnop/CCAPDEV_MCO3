@@ -1,13 +1,18 @@
 /**
  * install package dependencies
- * - npm  install express
- * - npm  install mongoose
+ * - npm install express
+ * - npm install mongoose
+ * - npm install bcrypt
  **/
 const express = require("express");
 const mongoose = require("mongoose");
 
 const app = express();
 app.use(express.json());
+
+// hashing
+const bcrypt = require('bcrypt');
+const SALT_WORK_FACTOR = 10;
 
 
 // ── DATABASE CONNECTION ──
@@ -88,7 +93,8 @@ app.post("/api/auth/login", async (req, res) => {
             .select("+password");
 
         if (user) {
-            if (password !== user.password)
+            const isMatch = await bcrypt.compare(password, user.password);
+            if (!isMatch)
                 return res.status(401).json({ message: "Invalid ID or password." });
 
             return res.json({
@@ -111,7 +117,8 @@ app.post("/api/auth/login", async (req, res) => {
             .select("+password");
 
         if (labtech) {
-            if (password !== labtech.password)
+            const isMatch = await bcrypt.compare(password, labtech.password);
+            if (!isMatch)
                 return res.status(401).json({ message: "Invalid ID or password." });
 
             return res.json({
@@ -155,6 +162,9 @@ app.post("/api/auth/register/student", async (req, res) => {
         if (existingEmail)
             return res.status(409).json({ message: "That email is already registered." });
 
+        const salt = await bcrypt.genSalt(SALT_WORK_FACTOR);
+        const hashedPassword = await bcrypt.hash(password, salt);
+
         const student = new Student({
             _id:          Number(studentId),
             name:         "",
@@ -163,7 +173,7 @@ app.post("/api/auth/register/student", async (req, res) => {
             course_code:  "",
             bio:          "",
             profile_img:  "default.png",
-            password:     password
+            password:     hashedPassword
         });
 
         await student.save();
@@ -200,6 +210,9 @@ app.post("/api/auth/register/labtech", async (req, res) => {
         if (existingEmail)
             return res.status(409).json({ message: "That email is already registered." });
 
+        const salt = await bcrypt.genSalt(SALT_WORK_FACTOR);
+        const hashedPassword = await bcrypt.hash(password, salt);
+
         const labtech = new LabTech({
             _id:         Number(employeeId),
             name:        "",
@@ -207,7 +220,7 @@ app.post("/api/auth/register/labtech", async (req, res) => {
             job_title:   "Lab Technician",
             bio:         "",
             profile_img: "default.png",
-            password:    password
+            password:    hashedPassword
         });
 
         await labtech.save();
@@ -263,6 +276,11 @@ app.get("/api/students/:id", async (req, res) => {
 // PUT /api/students/:id
 app.put("/api/students/:id", async (req, res) => {
     try {
+        if (req.body.password) {
+            const salt = await bcrypt.genSalt(SALT_WORK_FACTOR);
+            req.body.password = await bcrypt.hash(req.body.password, salt);
+        }
+
         const updated = await Student.findOneAndUpdate(
             { _id: Number(req.params.id) },
             { $set: req.body },
@@ -308,6 +326,11 @@ app.get("/api/labtech/:id", async (req, res) => {
 // PUT /api/labtech/:id
 app.put("/api/labtech/:id", async (req, res) => {
     try {
+        if (req.body.password) {
+            const salt = await bcrypt.genSalt(SALT_WORK_FACTOR);
+            req.body.password = await bcrypt.hash(req.body.password, salt);
+        }
+
         const updated = await LabTech.findOneAndUpdate(
             { _id: Number(req.params.id) },
             { $set: req.body },

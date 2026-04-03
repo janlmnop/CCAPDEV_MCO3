@@ -7,9 +7,7 @@ const labtechSchema = new mongoose.Schema({
     job_title: String,
     bio: String,
     profile_img: String,
-    password: { type: String, select: false }
+    password: { type: String, select: false, required: true }
 });
 
-const LabTech     = mongoose.model("LabTech",     labtechSchema,     "labtech");
-
-module.exports = LabTech;
+module.exports = mongoose.model('LabTech', labtechSchema, 'labtech');

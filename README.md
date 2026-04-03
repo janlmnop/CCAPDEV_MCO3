@@ -3,7 +3,7 @@ Lab Reservation Web App
 
 ## How to install dependencies . ݁₊ ⊹
 ```
-npm install express mongoose
+npm install express mongoose bcrypt
 ```
 
 How to run the application locally
@@ -113,3 +113,15 @@ CCAPDEV_MCO3/
 ```
 
 ---
+## Sample Passwords . ݁₊ ⊹
+```
+   Students
+   12300001: 12345678
+   12300002: 87654321
+   12300003: test
+   12300004: password
+   12300005: hello123
+
+   LabTech
+   1: helloworld!
+```

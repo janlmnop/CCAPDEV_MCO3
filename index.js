@@ -523,8 +523,18 @@ app.get("/api/reservation/find", async (req, res) => {
 // DELETE /api/reservation/:id
 app.delete("/api/reservation/:id", async (req, res) => {
     try {
-        const deleted = await Reservation.findByIdAndDelete(Number(req.params.id));
+        const deleted = await Reservation.findOneAndUpdate(
+			{ _id: Number(req.params.id) },
+            {	$set: {
+                    status: "deleted",
+                    updated_at: new Date().toISOString()
+				}
+            },
+            { returnDocument: "after", runValidators: true }
+        );
+
         if (!deleted) return res.status(404).json({ message: "Reservation not found" });
+
         res.json({ message: "Reservation deleted successfully" });
     } catch (err) {
         res.status(500).json({ error: err.message });

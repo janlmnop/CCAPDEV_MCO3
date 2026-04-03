@@ -3,9 +3,9 @@
   "name": "Hornet Silksong",
   "email_add": "hornet_silksong@dlsu.edu.ph",
   "college_code": "CCS",
-  "course_code": "BS-IS",
+  "course_code": "BS-IT",
   "bio": "hello world!",
-  "password": "12345678",
+  "password": "$2b$10$ZTLChHmnEgkWQeJ1w.Ohg.Q8PAqASgRGlu9uPZHFpjqCr43cO.v0C",
   "profile_img": "hornet_silksong.jpeg"
 },
 {
@@ -15,7 +15,7 @@
   "college_code": "RVRCOB",
   "course_code": "BS-ENT",
   "bio": "sample",
-  "password": "87654321",
+  "password": "$2b$10$rPb/v9T7HWYZ3QUP3c7ls.6dh1gvZyOThdf.VCjXXyRC9jcZk5ltS",
   "profile_img": "lace_silksong.png"
 },
 {
@@ -25,7 +25,7 @@
   "college_code": "CLA",
   "course_code": "ABBHS",
   "bio": "love to learn!",
-  "password": "test",
+  "password": "$2b$10$NTLUWqcW1Pk9dyRyiA9I3.BvErIdMR1ptdGqGkVAeVKcUTcFpM5ye",
   "profile_img": "bell_beast.png"
 },
 {
@@ -35,7 +35,7 @@
   "college_code": "GCOE",
   "course_code": "BS-CHY",
   "bio": "guardian of the emerald forest",
-  "password": "password",
+  "password": "$2b$10$lLyl42K.FsqJueVjCZztMuRxx4o8buLK93EaQUBytGS/DcHu1VIhi",
   "profile_img": "green_prince.png"
 },
 {
@@ -45,6 +45,6 @@
   "college_code": "BAGCED",
   "course_code": "BSE",
   "bio": "a voice carried by steel and shadow",
-  "password": "hello123",
+  "password": "$2b$10$JM1q7yFyymhhjz5fCvCZw.uZOtPAfig/ps1oblo5v9AvY7sXmVygC",
   "profile_img": "skarrsinger_karmelitag.png"
 }]

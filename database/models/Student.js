@@ -8,9 +8,8 @@ const studentSchema = new mongoose.Schema({
     course_code: String,
     bio: String,
     profile_img: String,
-    password: { type: String, select: false }
+    password: { type: String, select: false, required: true }
 });
 
-const Student     = mongoose.model("Student",     studentSchema,     "students");
 
-module.exports = Student;
+module.exports = mongoose.model('Student', studentSchema);

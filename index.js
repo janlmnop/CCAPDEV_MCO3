@@ -14,11 +14,12 @@ app.use(express.json());
 const bcrypt = require('bcrypt');
 const SALT_WORK_FACTOR = 10;
 
-// personal atlas URI
-const config = require("./config");
+// get .env file contents
+const { loadEnvFile } = require('node:process');
+loadEnvFile();
 
 // ── DATABASE CONNECTION ──
-mongoose.connect(config.MONGO_URI)
+mongoose.connect(process.env.MONGO_URI)
 	.then(() => {
 		console.log("MongoDB connected");
 

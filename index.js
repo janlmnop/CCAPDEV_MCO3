@@ -481,6 +481,80 @@ app.get("/api/reservation/:id", async (req, res) => {
     }
 });
 
+// UPDATE reservation time range and/or anonymity
+// PUT /api/reservation/:id
+app.put("/api/reservation/:id", async (req, res) => {
+    try {
+        const reservationId = Number(req.params.id);
+        const { start_time, end_time, is_anonymous } = req.body;
+
+        if (!start_time || !end_time) {
+            return res.status(400).json({
+                message: "start_time and end_time are required"
+            });
+        }
+
+        const reservation = await Reservation.findById(reservationId);
+
+        if (!reservation) {
+            return res.status(404).json({
+                message: "Reservation not found"
+            });
+        }
+
+        if (reservation.status !== "active") {
+            return res.status(400).json({
+                message: "Only active reservations can be edited"
+            });
+        }
+
+        if (start_time >= end_time) {
+            return res.status(400).json({
+                message: "Invalid reservation time range"
+            });
+        }
+
+        const overlappingReservation = await Reservation.findOne({
+            _id: { $ne: reservationId },
+            lab_id: reservation.lab_id,
+            computer_id: reservation.computer_id,
+            date: reservation.date,
+            status: "active",
+            start_time: { $lt: end_time },
+            end_time: { $gt: start_time }
+        });
+
+        if (overlappingReservation) {
+            return res.status(409).json({
+                message: "Selected edited time range overlaps with another reservation"
+            });
+        }
+
+        const updated = await Reservation.findOneAndUpdate(
+            { _id: reservationId },
+            {
+                $set: {
+                    start_time: start_time,
+                    end_time: end_time,
+                    is_anonymous: is_anonymous === true,
+                    updated_at: new Date().toISOString()
+                }
+            },
+            { returnDocument: "after", runValidators: true }
+        );
+
+        res.json({
+            message: "Reservation updated successfully",
+            reservation: updated
+        });
+    } catch (error) {
+        console.error("Error updating reservation:", error);
+        res.status(500).json({
+            message: "Server error while updating reservation"
+        });
+    }
+});
+
 // FIND a reservation by lab_id + computer_no + date + start_time
 // used by lt-vr rc.js to get the reservation _id before deleting it
 // GET /api/reservation/find?lab_id=1&computer_no=2&date=2026-03-21&start_time=0800

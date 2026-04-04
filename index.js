@@ -18,7 +18,7 @@ const SALT_WORK_FACTOR = 10;
 const config = require("./config");
 
 // ── DATABASE CONNECTION ──
-mongoose.connect("config.MONGO_URI")
+mongoose.connect(config.MONGO_URI)
 	.then(() => {
 		console.log("MongoDB connected");
 

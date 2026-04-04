@@ -14,9 +14,11 @@ app.use(express.json());
 const bcrypt = require('bcrypt');
 const SALT_WORK_FACTOR = 10;
 
+// personal atlas URI
+const config = require("./config");
 
 // ── DATABASE CONNECTION ──
-mongoose.connect("mongodb://127.0.0.1:27017/reservation_db")
+mongoose.connect("config.MONGO_URI")
 	.then(() => {
 		console.log("MongoDB connected");
 

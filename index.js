@@ -22,6 +22,8 @@ loadEnvFile();
 mongoose.connect(process.env.MONGO_URI)
 	.then(() => {
 		console.log("MongoDB connected");
+		// for render testing 
+		console.log("DB name:", mongoose.connection.name);
 
 		// change past reservation status to completed every 10 mins
         completePastReservations();

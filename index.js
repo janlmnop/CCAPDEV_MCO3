@@ -3,6 +3,7 @@
  * - npm install express
  * - npm install mongoose
  * - npm install bcrypt
+ * - npm install dotenv
  **/
 const express = require("express");
 const mongoose = require("mongoose");
@@ -15,8 +16,7 @@ const bcrypt = require('bcrypt');
 const SALT_WORK_FACTOR = 10;
 
 // get .env file contents
-const { loadEnvFile } = require('node:process');
-loadEnvFile();
+require("dotenv").config();
 
 // ── DATABASE CONNECTION ──
 mongoose.connect(process.env.MONGO_URI)

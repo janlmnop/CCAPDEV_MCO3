@@ -1,9 +1,7 @@
 const API_BASE = "/api";
 
-// get student_id from URL query param
-// e.g. userprofile_student_other.html?student_id=12300001
-const params    = new URLSearchParams(window.location.search);
-const studentId = JSON.parse(localStorage.getItem("user") || "{}");
+const params = new URLSearchParams(window.location.search);
+const studentId = params.get("student_id");
 
 if (!studentId) {
     alert("No student ID provided.");
@@ -12,10 +10,9 @@ if (!studentId) {
 
 const profilePic = document.getElementById("profile-pic");
 
-// load profile — read only, no edit/delete
 async function loadProfile() {
     try {
-        const res = await fetch(`${API_BASE}/students/${studentId._id}`);
+        const res = await fetch(`${API_BASE}/students/${studentId}`);
         if (!res.ok) throw new Error("Student not found");
         const data = await res.json();
 
@@ -25,7 +22,6 @@ async function loadProfile() {
         document.getElementById("view-college").innerText = data.college_code || "-";
         document.getElementById("view-course").innerText  = data.course_code  || "-";
         document.getElementById("view-bio").innerText     = data.bio          || "-";
-
         profilePic.src = `/images/${data.profile_img || "default.jpeg"}`;
     } catch (err) {
         console.error(err);

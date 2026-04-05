@@ -23,17 +23,18 @@ mongoose.connect(process.env.MONGO_URI, {
     serverSelectionTimeoutMS: 30000,
     socketTimeoutMS: 45000,
 })
-	.then(() => {
-		console.log("MongoDB connected");
-		// for render testing 
-		console.log("DB name:", mongoose.connection.name);
-		// change past reservation status to completed every 10 mins
+.then(() => {
+    console.log("MongoDB connected");
+    console.log("DB name:", mongoose.connection.name);
+    completePastReservations();
+    setInterval(() => {
         completePastReservations();
-        setInterval(() => {
-            completePastReservations();
-        }, 10 * 60 * 1000);
-    })
-    .catch(err => console.log(err));
+    }, 10 * 60 * 1000);
+})
+.catch(err => {
+    console.error("MongoDB connection error:", err.message);
+    process.exit(1);
+});
 
 // ── MODELS ──
 const Student     = require('./database/models/Student');

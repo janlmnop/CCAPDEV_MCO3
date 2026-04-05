@@ -1,4 +1,4 @@
-const API_URL = "http://localhost:3000/api/labtech";
+const API_URL = "/api/labtech";
 const currentLabTech = JSON.parse(localStorage.getItem("user") || "{}");
 
 const profilePic = document.getElementById("profile-pic");

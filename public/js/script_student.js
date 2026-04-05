@@ -1,5 +1,5 @@
-const API_URL = "http://localhost:3000/api/students";
-const currentStudent = JSON.parse(localStorage.getItem("user") || "{}");      // NOTE : this should depend on the login
+const API_URL = "/api/students";
+const currentStudent = JSON.parse(localStorage.getItem("user") || "{}");   
 
 // elements
 const profilePic = document.getElementById("profile-pic");

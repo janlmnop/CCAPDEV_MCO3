@@ -160,7 +160,7 @@
                 const today = new Date().toISOString().split('T')[0];
 
                 // Past = before today OR not active
-                const past = all.filter(r => r.date < today || r.status !== 'active');
+                const past = all.filter(r.status === 'completed');
 
                 const tbody = document.getElementById('reservations-tbody');
                 tbody.innerHTML = '';

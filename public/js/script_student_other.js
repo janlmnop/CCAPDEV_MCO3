@@ -1,4 +1,4 @@
-const API_BASE = "/api/students";
+const API_BASE = "/api";
 
 // get student_id from URL query param
 // e.g. userprofile_student_other.html?student_id=12300001

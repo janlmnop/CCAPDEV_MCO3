@@ -19,12 +19,14 @@ const SALT_WORK_FACTOR = 10;
 require("dotenv").config();
 
 // ── DATABASE CONNECTION ──
-mongoose.connect(process.env.MONGO_URI)
+mongoose.connect(process.env.MONGO_URI, {
+    serverSelectionTimeoutMS: 30000,
+    socketTimeoutMS: 45000,
+})
 	.then(() => {
 		console.log("MongoDB connected");
 		// for render testing 
 		console.log("DB name:", mongoose.connection.name);
-
 		// change past reservation status to completed every 10 mins
         completePastReservations();
         setInterval(() => {

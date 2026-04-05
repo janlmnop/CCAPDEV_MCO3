@@ -3,7 +3,8 @@ const API_BASE = "/api";
 // get student_id from URL query param
 // e.g. userprofile_student_other.html?student_id=12300001
 const params    = new URLSearchParams(window.location.search);
-const studentId = JSON.parse(localStorage.getItem("user") || "{}");
+const studentId = params.get("student_id");
+// (and update the fetch call from studentId._id to just studentId)
 
 if (!studentId) {
     alert("No student ID provided.");

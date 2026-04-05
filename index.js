@@ -180,7 +180,7 @@ app.post("/api/auth/register/student", async (req, res) => {
             college_code: "",
             course_code:  "",
             bio:          "",
-            profile_img:  "default.png",
+            profile_img:  "user_picture.png",
             password:     hashedPassword
         });
 
@@ -227,7 +227,7 @@ app.post("/api/auth/register/labtech", async (req, res) => {
             email_add:   email,
             job_title:   "Lab Technician",
             bio:         "",
-            profile_img: "default.png",
+            profile_img: "user_picture.png",
             password:    hashedPassword
         });
 

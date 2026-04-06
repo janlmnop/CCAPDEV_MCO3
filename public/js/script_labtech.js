@@ -32,7 +32,7 @@ async function loadProfile() {
         document.getElementById("edit-email").value = data.email_add;
         document.getElementById("edit-job").value = data.job_title;
         document.getElementById("edit-bio").value = data.bio;
-        document.getElementById("edit-profile-img").value = data.profile_img || "Jane.jpg";
+        // document.getElementById("edit-profile-img").value = data.profile_img || "Jane.jpg";
 
     } catch (err) {
         console.error(err);

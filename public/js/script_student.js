@@ -31,7 +31,7 @@ async function loadProfile() {
         document.getElementById("edit-college").value = data.college_code;
         document.getElementById("edit-course").value = data.course_code;
         document.getElementById("edit-bio").value = data.bio;
-        document.getElementById("edit-profile-img").value = data.profile_img || "default.jpeg";
+        // document.getElementById("edit-profile-img").value = data.profile_img || "default.jpeg";
 
         profilePic.src = `/images/${data.profile_img || "default.jpeg"}`;
     } catch (err) {

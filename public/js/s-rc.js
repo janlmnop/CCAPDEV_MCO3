@@ -501,7 +501,7 @@ function fillSchedulePage() {
         const reservedInfo = getReservedSlotInfo(currentScheduleDate, slotIndex);
 
         if (reservedInfo) {
-            if (reservedInfo.isAnonymous) {
+            if (reservedInfo.isAnonymous && reservedUserId !== currentUserId) {
                 slotCell.textContent = "Anonymous";
             } else {
                 const displayName = reservedInfo.reservedBy || "Reserved";

@@ -16,7 +16,7 @@ const profilePic = document.getElementById("profile-pic");
 // load profile — read only, no edit/delete
 async function loadProfile() {
     try {
-        const res = await fetch(`${API_BASE}/students/${studentId._id}`);
+        const res = await fetch(`${API_BASE}/students/${studentId}`);
         if (!res.ok) throw new Error("Student not found");
         const data = await res.json();
 

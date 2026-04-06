@@ -89,12 +89,12 @@
 
     <script>
         const API_BASE = "/api";
-        const userType = localStorage.getItem('userType') || 'student';
+        const userType = localStorage.getItem('userType') || sessionStorage.getItem("userType") || 'student';
 
         // ── USER ID LOGIC ──
         const urlParams    = new URLSearchParams(window.location.search);
         const viewStudent  = urlParams.get('view_student');
-        const loggedInUser = JSON.parse(localStorage.getItem('user') || '{}');
+        const loggedInUser = JSON.parse(localStorage.getItem('user') || sessionStorage.getItem("user") || '{}');
         const userId       = viewStudent ? parseInt(viewStudent, 10) : loggedInUser._id;
         const profileType  = viewStudent ? 'student' : userType;
 

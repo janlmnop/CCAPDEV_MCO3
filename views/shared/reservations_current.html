@@ -165,8 +165,9 @@
                     tbody.innerHTML = `<tr><td colspan="5" style="text-align:center;color:#9b7fe8;padding:20px;">No current reservations</td></tr>`;
                 } else {
                     current.forEach(r => {
-                        const slots   = r.slots;
-                        const timeStr = `${fmtSlot(slots[0])}-${fmtSlot(addThirtyMin(slots[slots.length - 1]))}`;
+                        const startTime = r.start_time;
+                        const endTime = r.end_time;
+                        const timeStr = `${fmtSlot(startTime)}-${fmtSlot(endTime)}`;
                         const compNo  = String(r.computer_no).padStart(2, '0');
 
                         const tr = document.createElement('tr');

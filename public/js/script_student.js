@@ -1,5 +1,5 @@
 const API_URL = "/api/students";
-const currentStudent = JSON.parse(localStorage.getItem("user") || "{}");   
+const currentStudent = JSON.parse(localStorage.getItem("user") || sessionStorage.getItem("user") ||"{}");   
 
 // elements
 const profilePic = document.getElementById("profile-pic");
@@ -33,7 +33,7 @@ async function loadProfile() {
         document.getElementById("edit-bio").value = data.bio;
         // document.getElementById("edit-profile-img").value = data.profile_img || "default.jpeg";
 
-        profilePic.src = `/images/${data.profile_img || "default.jpeg"}`;
+        profilePic.src = `/images/${data.profile_img || "user_picture.png"}`;
     } catch (err) {
         console.error(err);
         alert("Could not load profile.");

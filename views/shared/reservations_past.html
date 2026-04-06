@@ -60,7 +60,6 @@
                     <table class="reservations-table">
                         <thead>
                             <tr>
-                                <th class="select-col">select</th>
                                 <th>Date</th>
                                 <th>Time</th>
                                 <th>Lab</th>
@@ -171,8 +170,6 @@
 
                         const tr = document.createElement('tr');
                         tr.innerHTML = `
-                            <td class="checkbox-cell">
-                                <input type="checkbox" class="res-checkbox">
                             </td>
                             <td>${r.date}</td>
                             <td>${timeStr}</td>

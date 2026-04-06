@@ -732,6 +732,53 @@ app.get("/api/labs/availability", async (req, res) => {
     }
 });
 
+// GET ongoing reservations for computers per lab
+app.get("/api/labs/ongoing", async (req, res) => {
+    try {
+        const { date, start_time, end_time } = req.query;
+
+        const reservations = await Reservation.find({
+            date: date,
+            status: "active",
+            start_time: { $lt: end_time },
+            end_time: { $gt: start_time }
+        });
+
+        const labCounts = {
+            1: 0,
+            2: 0,
+            3: 0,
+            4: 0,
+            5: 0
+        };
+
+        reservations.forEach(function (reservation) {
+            const labId = Math.ceil(reservation.computer_id / 10);
+
+            if (labCounts[labId] !== undefined) {
+                labCounts[labId]++;
+            }
+        });
+
+        const result = [];
+
+        for (let lab = 1; lab <= 5; lab++) {
+            result[lab - 1] = {
+                lab_id: lab,
+                total_computers: 10,
+                reserved_computers: labCounts[lab]
+            };
+        }
+
+        res.json(result);
+    } catch (error) {
+        console.error("Error getting ongoing lab reservations:", error);
+        res.status(500).json({
+            message: "Server error while getting ongoing lab reservations"
+        });
+    }
+});
+
 // GET comp availability for a specific date and time range
 app.get("/api/comps/availability", async (req, res) => {
     try {
@@ -768,6 +815,39 @@ app.get("/api/comps/availability", async (req, res) => {
         console.error("Error checking computer availability:", error);
         res.status(500).json({
             message: "Server error while checking computer availability"
+        });
+    }
+});
+
+// GET ongoing reservations for computers in a specific lab
+app.get("/api/comps/ongoing", async (req, res) => {
+    try {
+        const { lab_id, date, start_time, end_time } = req.query;
+
+        const reservations = await Reservation.find({
+            lab_id: Number(lab_id),
+            date: date,
+            status: "active",
+            start_time: { $lt: end_time },
+            end_time: { $gt: start_time }
+        });
+
+        const reservedCompNumbers = reservations
+            .map(function (reservation) {
+                return ((reservation.computer_id - 1) % 10) + 1;
+            })
+            .sort(function (a, b) {
+                return a - b;
+            });
+
+        res.json({
+            lab_id: Number(lab_id),
+            reserved_computers: reservedCompNumbers
+        });
+    } catch (error) {
+        console.error("Error getting ongoing computer reservations:", error);
+        res.status(500).json({
+            message: "Server error while getting ongoing computer reservations"
         });
     }
 });

@@ -882,31 +882,27 @@ app.get("/api/comps/reservations", async (req, res) => {
 		
 		// check if reservation is anonymous
         const result = reservations.map(function (reservation) {
-            let reservedBy = "Reserved";
+			let reservedBy = "Reserved";
 
-            if (reservation.is_anonymous === true) {
-                reservedBy = "Anonymous";
-            } else {
-                const student = studentMap[reservation.user_id];
+			const student = studentMap[reservation.user_id];
 
-                if (student && student.email_add) {
-                    reservedBy = student.email_add;
-                }
-            }
+			if (student && student.email_add) {
+				reservedBy = student.email_add;
+			}
 
-            return {
-                _id: reservation._id,
-                user_id: reservation.user_id,
-                lab_id: reservation.lab_id,
-                computer_id: reservation.computer_id,
-                date: reservation.date,
-                start_time: reservation.start_time,
-                end_time: reservation.end_time,
-                is_anonymous: reservation.is_anonymous === true,
-                status: reservation.status,
-                reserved_by: reservedBy
-            };
-        });
+			return {
+				_id: reservation._id,
+				user_id: reservation.user_id,
+				lab_id: reservation.lab_id,
+				computer_id: reservation.computer_id,
+				date: reservation.date,
+				start_time: reservation.start_time,
+				end_time: reservation.end_time,
+				is_anonymous: reservation.is_anonymous === true,
+				status: reservation.status,
+				reserved_by: reservedBy
+			};
+		});
 
         res.json(result);
     } catch (error) {

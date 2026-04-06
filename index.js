@@ -31,6 +31,10 @@ mongoose.connect(process.env.MONGO_URI, {
 .then(() => {
     console.log("MongoDB connected");
     console.log("DB name:", mongoose.connection.name);
+	// testing only
+	console.log("Server time now:", new Date().toString());
+	console.log("ISO time now:", new Date().toISOString());
+	console.log("TZ env:", process.env.TZ);
     completePastReservations();
     setInterval(() => {
         completePastReservations();

@@ -208,20 +208,20 @@ function formatCurrentDisplayTimeToDb(timeText) {
     return `${String(hours).padStart(2, "0")}${String(minutes).padStart(2, "0")}`;
 }
 
-async function getStudentEmailById(studentId) {
+async function getStudentNameById(studentId) {
     if (!studentId) return "";
 
     try {
         const response = await fetch(`${API_BASE}/students/${studentId}`);
 
         if (!response.ok) {
-            throw new Error("Failed to load student email");
+            throw new Error("Failed to load student name");
         }
 
         const student = await response.json();
-        return student.email_add || "";
+        return student.name || "";
     } catch (error) {
-        console.error("Error getting student email:", error);
+        console.error("Error getting student name:", error);
         return "";
     }
 }
@@ -608,7 +608,7 @@ async function fetchComputerReservations(dateValue) {
                 reservedScheduleSlots[dateValue][slotIndex] = {
                     reservationId: reservation._id || "",
                     userId: reservation.user_id || "",
-                    reservedBy: reservation.email_add || reservation.reserved_by || "Reserved",
+                    reservedBy: reservation.name || reservation.reserved_by || "Reserved",
                     isAnonymous: reservation.is_anonymous === true,
                     reservation: reservation
                 };
@@ -1066,11 +1066,11 @@ const yesBtn = document.getElementById("yes-btn");
 const noBtn = document.getElementById("no-btn");
 const anonCheck = document.getElementById("anon-check") || document.querySelector(".anon-check");
 
-let reservedStudentEmail = "";
+let reservedStudentName = "";
 
-async function getReservedStudentEmail() {
+async function getReservedStudentName() {
     const reservedStudentId = getReservedForStudent();
-    return await getStudentEmailById(reservedStudentId);
+    return await getStudentNameById(reservedStudentId);
 }
 
 function getOwnerLabel() {
@@ -1080,13 +1080,13 @@ function getOwnerLabel() {
     let baseLabel = "";
 
     if (reservedStudentId) {
-        if (reservedStudentEmail) {
-            baseLabel = reservedStudentEmail;
+        if (reservedStudentName) {
+            baseLabel = reservedStudentName;
         } else {
             baseLabel = `Student ID: ${reservedStudentId}`;
         }
     } else {
-        baseLabel = loggedInUser.name || loggedInUser.email_add || loggedInUser._id || "Unknown";
+        baseLabel = loggedInUser.name || loggedInUser.name || loggedInUser._id || "Unknown";
     }
 
     if (anonCheck && anonCheck.checked) {
@@ -1119,12 +1119,12 @@ async function fillConfirmPopup() {
 
     if (isEditReservationPage && originalReservationInfo) {
         let ownerText =
-            originalReservationInfo.email_add ||
+            originalReservationInfo.name ||
             originalReservationInfo.reserved_by ||
             "";
 
         if (!ownerText && originalReservationInfo.user_id) {
-            ownerText = await getStudentEmailById(originalReservationInfo.user_id);
+            ownerText = await getStudentNameById(originalReservationInfo.user_id);
         }
 
         if (!ownerText && originalReservationInfo.user_id) {
@@ -1156,7 +1156,7 @@ function fillDeletePopup() {
     }
     if (paragraphs[5]) {
         paragraphs[5].textContent =
-            `Set under: ${selectedReservationInfo.email_add || selectedReservationInfo.reserved_by || "Reserved"}`;
+            `Set under: ${selectedReservationInfo.name || selectedReservationInfo.reserved_by || "Reserved"}`;
     }
 }
 
@@ -1178,8 +1178,8 @@ async function openReservePopup() {
     }
 
     const reservedStudentId = getReservedForStudent();
-    if (reservedStudentId && !reservedStudentEmail) {
-        reservedStudentEmail = await getReservedStudentEmail();
+    if (reservedStudentId && !reservedStudentName) {
+        reservedStudentName = await getReservedStudentName();
     }
 
     await fillConfirmPopup();

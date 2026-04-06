@@ -716,7 +716,14 @@ function fillSchedulePage() {
         const selectable = CanSelectSlot(currentScheduleDate, slotIndex);
 
         if (reservedInfo) {
-            slotCell.textContent = reservedInfo.reservedBy || "Reserved";
+			const displayName = reservedInfo.reservedBy || "Reserved";
+
+			if (reservedInfo.userId) {
+				slotCell.innerHTML = "<a href="/views/other-student/userprofile_student_other.html?student_id=${reservedInfo.userId}">
+                ${displayName}</a>";
+			} else {
+				slotCell.textContent = displayName
+			}
         } else {
             slotCell.innerHTML = "";
         }

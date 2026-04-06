@@ -11,7 +11,7 @@ function formatDateValue(date) {
 
 function formatDateLabel(date) {
     return date.toLocaleDateString("en-PH", {
-        month: "short",
+        month: "short",1
         day: "numeric",
         year: "numeric"
     });
@@ -501,13 +501,13 @@ function fillSchedulePage() {
         const reservedInfo = getReservedSlotInfo(currentScheduleDate, slotIndex);
 
         if (reservedInfo) {
+            const displayName = reservedInfo.reservedBy || "Reserved";
+            const currentUserId = String(getCurrentStudentId() || "");
+            const reservedUserId = String(reservedInfo.userId || "");
+            
             if (reservedInfo.isAnonymous && reservedUserId !== currentUserId) {
                 slotCell.textContent = "Anonymous";
             } else {
-                const displayName = reservedInfo.reservedBy || "Reserved";
-                const currentUserId = String(getCurrentStudentId() || "");
-                const reservedUserId = String(reservedInfo.userId || "");
-        
                 if (reservedUserId) {
                     let profileUrl = "";
         

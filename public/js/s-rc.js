@@ -172,9 +172,9 @@ function getCurrentStudentName() {
     return loggedInUser.name || "";
 }
 
-function getCurrentStudentEmail() {
+function getCurrentStudentName() {
     const loggedInUser = getLoggedInUser();
-    return loggedInUser.email_add || loggedInUser.email || "";
+    return loggedInUser.name || loggedInUser.name || "";
 }
 
 function getComputerId() {
@@ -866,10 +866,9 @@ function getReservationDetails() {
 }
 
 function getOwnerLabel() {
-    const studentEmail = getCurrentStudentEmail();
     const studentName = getCurrentStudentName();
 
-    const baseLabel = studentEmail || studentName || "Unknown";
+    const baseLabel = studentName || "Unknown";
 
     if (anonCheck && anonCheck.checked) {
         return `${baseLabel} (Anonymous)`;

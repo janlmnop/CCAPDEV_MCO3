@@ -46,8 +46,8 @@
 
         <script>
             document.addEventListener('DOMContentLoaded', function() {
-                const user = JSON.parse(localStorage.getItem('user') || '{}');
-                const userType = localStorage.getItem('userType');
+                const user = JSON.parse(localStorage.getItem('user') || sessionStorage.getItem("user") ||"{}");
+                const userType = localStorage.getItem('userType') || sessionStorage.getItem("userType");
                 
                 if (userType !== 'labtech') {
                     alert('Access denied. Only lab technicians can create new lab tech accounts.');

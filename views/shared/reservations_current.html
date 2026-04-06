@@ -25,9 +25,6 @@
         <div class="user-name" id="user-name">Loading...</div>
         <div class="user-id" id="user-id"></div>
         <div class="user-course" id="user-course"></div>
-        <a href="#" id="backBtn" class="back-btn">
-            <img src="/images/back_to_user_profile_logo.png" alt="Back to User Profile">
-        </a>
     </div>
 
     <!-- ── MAIN CONTENT ── -->
@@ -92,23 +89,25 @@
 
     <script>
         const API_BASE = "/api";
-        const userType = localStorage.getItem('userType') || 'student';
+        const userType = localStorage.getItem('userType') || sessionStorage.getItem("userType") || 'student';
 
         // ── USER ID LOGIC ──
         const urlParams     = new URLSearchParams(window.location.search);
         const viewStudent   = urlParams.get('view_student');
-        const loggedInUser  = JSON.parse(localStorage.getItem('user') || '{}');
+        const loggedInUser  = JSON.parse(localStorage.getItem('user') || sessionStorage.getItem("user") || '{}');
         const userId        = viewStudent ? parseInt(viewStudent, 10) : loggedInUser._id;
         const profileType   = viewStudent ? 'student' : userType;
 
         // ── BACK BUTTON ──
         const backBtn = document.getElementById('backBtn');
-        if (viewStudent) {
-            backBtn.href = '/views/labtech/lt-ss.html';
-        } else {
-            backBtn.href = userType === 'labtech'
-                ? '/views/labtech/userprofile_labtech.html'
-                : '/views/student/userprofile_student.html';
+        if (backBtn) {
+            if (viewStudent) {
+                backBtn.href = '/views/labtech/lt-ss.html';
+            } else {
+                backBtn.href = userType === 'labtech'
+                    ? '/views/labtech/userprofile_labtech.html'
+                    : '/views/student/userprofile_student.html';
+            }
         }
 
         // carry view_student param to the Past tab link
@@ -165,8 +164,9 @@
                     tbody.innerHTML = `<tr><td colspan="5" style="text-align:center;color:#9b7fe8;padding:20px;">No current reservations</td></tr>`;
                 } else {
                     current.forEach(r => {
-                        const slots   = r.slots;
-                        const timeStr = `${fmtSlot(slots[0])}-${fmtSlot(slots[slots.length - 1])}`;
+                        const startTime = r.start_time;
+                        const endTime = r.end_time;
+                        const timeStr = `${fmtSlot(startTime)}-${fmtSlot(endTime)}`;
                         const compNo  = String(r.computer_no).padStart(2, '0');
 
                         const tr = document.createElement('tr');

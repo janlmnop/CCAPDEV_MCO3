@@ -883,8 +883,8 @@ app.get("/api/comps/reservations", async (req, res) => {
 
 			const student = studentMap[reservation.user_id];
 
-			if (student && student.email_add) {
-				reservedBy = student.email_add;
+			if (student && student.name) {
+				reservedBy = student.name;
 			}
 
 			return {

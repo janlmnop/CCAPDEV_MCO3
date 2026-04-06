@@ -172,11 +172,6 @@ function getCurrentStudentName() {
     return loggedInUser.name || "";
 }
 
-function getCurrentStudentEmail() {
-    const loggedInUser = getLoggedInUser();
-    return loggedInUser.email_add || loggedInUser.email || "";
-}
-
 function getComputerId() {
     const selectedLab = Number(getSelectedLab());
     const selectedComp = Number(getSelectedComp());
@@ -506,17 +501,26 @@ function fillSchedulePage() {
         const reservedInfo = getReservedSlotInfo(currentScheduleDate, slotIndex);
 
         if (reservedInfo) {
-            selectedScheduleSlots[currentScheduleDate] =
-                getSelectedSlotsForDate(currentScheduleDate).filter(function (indexValue) {
-                    return indexValue !== slotIndex;
-                });
-
-            if (reservedInfo.isAnonymous) {
+            const displayName = reservedInfo.reservedBy || "Reserved";
+            const currentUserId = String(getCurrentStudentId() || "");
+            const reservedUserId = String(reservedInfo.userId || "");
+            
+            if (reservedInfo.isAnonymous && reservedUserId !== currentUserId) {
                 slotCell.textContent = "Anonymous";
-            } else if (reservedInfo.reservedBy && reservedInfo.reservedBy !== "Reserved") {
-                slotCell.textContent = reservedInfo.reservedBy;
             } else {
-                slotCell.textContent = "Reserved";
+                if (reservedUserId) {
+                    let profileUrl = "";
+        
+                    if (reservedUserId === currentUserId) {
+                        profileUrl = "/views/student/userprofile_student.html";
+                    } else {
+                        profileUrl = `/views/other-student/userprofile_student_other.html?student_id=${reservedUserId}`;
+                    }
+        
+                    slotCell.innerHTML = `<a href="${profileUrl}">${displayName}</a>`;
+                } else {
+                    slotCell.textContent = displayName;
+                }
             }
         } else {
             slotCell.innerHTML = "";
@@ -866,10 +870,9 @@ function getReservationDetails() {
 }
 
 function getOwnerLabel() {
-    const studentEmail = getCurrentStudentEmail();
     const studentName = getCurrentStudentName();
 
-    const baseLabel = studentEmail || studentName || "Unknown";
+    const baseLabel = studentName || "Unknown";
 
     if (anonCheck && anonCheck.checked) {
         return `${baseLabel} (Anonymous)`;

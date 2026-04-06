@@ -1,5 +1,5 @@
 const API_URL = "/api/labtech";
-const currentLabTech = JSON.parse(localStorage.getItem("user") || "{}");
+const currentLabTech = JSON.parse(localStorage.getItem("user") || sessionStorage.getItem("user") ||"{}");   
 
 const profilePic = document.getElementById("profile-pic");
 

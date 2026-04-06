@@ -48,13 +48,36 @@ backDelete.onclick = () => containerDelete.classList.remove('active');
 
 // edit profile
 submitEdit.onclick = async () => {
+    let newProfileImg = null; // track uploaded filename
+
+    const fileInput = document.getElementById("edit-profile-img");
+    if (fileInput.files.length > 0) {
+        const formData = new FormData();
+        formData.append("image", fileInput.files[0]);
+
+        try {
+            const uploadRes = await fetch(`/api/upload/labtech/${currentLabTech._id}`, {
+                method: "POST",
+                body: formData
+            });
+            if (!uploadRes.ok) throw new Error("Upload failed");
+            const uploadData = await uploadRes.json();
+            newProfileImg = uploadData.profile_img; // filename returned from server
+            document.getElementById("upload-status").innerText = "Photo uploaded!";
+        } catch (err) {
+            alert("Photo upload failed. Other changes will still save.");
+        }
+    }
+
     const updated = {
         name: document.getElementById("edit-name").value,
         email_add: document.getElementById("edit-email").value,
         job_title: document.getElementById("edit-job").value,
         bio: document.getElementById("edit-bio").value,
-        profile_img: document.getElementById("edit-profile-img").value
     };
+
+    // only update profile_img if a new photo was actually uploaded
+    if (newProfileImg) updated.profile_img = newProfileImg;
 
     try {
         const res = await fetch(`${API_URL}/${currentLabTech._id}`, {

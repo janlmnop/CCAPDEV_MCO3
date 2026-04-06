@@ -103,7 +103,10 @@
                             </tr>
                             <tr>
                                 <td><label for="profile_img">Profile Image:</label></td>
-                                <td><input type="text" id="edit-profile-img" name="profile-img" size="40" max="50"></td>
+                                <td>
+                                    <input type="file" id="edit-profile-img" name="profile-img" accept="image/*">
+                                    <p id="upload-status" style="font-size:12px; margin:4px 0 0 0;"></p>
+                                </td>
                             </tr>
                         </table>
                         <div class="up-popup-buttons-edit">

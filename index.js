@@ -4,6 +4,7 @@
  * - npm install mongoose
  * - npm install bcrypt
  * - npm install dotenv
+ * - npm install express-fileupload
  **/
 const express = require("express");
 const mongoose = require("mongoose");
@@ -17,6 +18,10 @@ const SALT_WORK_FACTOR = 10;
 
 // get .env file contents
 require("dotenv").config();
+
+// file upload
+const fileUpload = require('express-fileupload');
+app.use(fileUpload());
 
 // ── DATABASE CONNECTION ──
 mongoose.connect(process.env.MONGO_URI, {
@@ -955,6 +960,59 @@ app.post("/api/reservations", async (req, res) => {
         });
     }
 });
+
+// ════════════════════════════════════════
+//  FILE UPLOAD ROUTES
+// ════════════════════════════════════════
+
+// POST /api/upload/student/:id
+app.post("/api/upload/student/:id", async (req, res) => {
+    try {
+        if (!req.files || !req.files.image)
+            return res.status(400).json({ message: "No image uploaded." });
+
+        const image = req.files.image;
+        const filename = `student_${req.params.id}_${Date.now()}${path.extname(image.name)}`;
+        const savePath = path.resolve(__dirname, "public/images", filename);
+
+        await image.mv(savePath);
+
+        const updated = await Student.findOneAndUpdate(
+            { _id: Number(req.params.id) },
+            { $set: { profile_img: filename } },
+            { returnDocument: "after" }
+        );
+        if (!updated) return res.status(404).json({ message: "Student not found" });
+        res.json({ success: true, profile_img: filename });
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
+// POST /api/upload/labtech/:id
+app.post("/api/upload/labtech/:id", async (req, res) => {
+    try {
+        if (!req.files || !req.files.image)
+            return res.status(400).json({ message: "No image uploaded." });
+
+        const image = req.files.image;
+        const filename = `labtech_${req.params.id}_${Date.now()}${path.extname(image.name)}`;
+        const savePath = path.resolve(__dirname, "public/images", filename);
+
+        await image.mv(savePath);
+
+        const updated = await LabTech.findOneAndUpdate(
+            { _id: Number(req.params.id) },
+            { $set: { profile_img: filename } },
+            { returnDocument: "after" }
+        );
+        if (!updated) return res.status(404).json({ message: "Lab Tech not found" });
+        res.json({ success: true, profile_img: filename });
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
 // ════════════════════════════════════════
 //  SERVER
 // ════════════════════════════════════════

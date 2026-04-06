@@ -3,7 +3,7 @@ Lab Reservation Web App
 
 ## How to install dependencies . ݁₊ ⊹
 ```
-npm install express mongoose bcrypt dotenv
+npm install express mongoose bcrypt dotenv express-fileupload
 ```
 
 How to run the application locally

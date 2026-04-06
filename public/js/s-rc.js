@@ -157,7 +157,9 @@ function getSelectedDate(dateValue) {
 }
 
 function getLoggedInUser() {
-    return JSON.parse(localStorage.getItem("user") || "{}");
+    return JSON.parse(
+        localStorage.getItem("user") || sessionStorage.getItem("user") || "{}"
+    );
 }
 
 function getCurrentStudentId() {

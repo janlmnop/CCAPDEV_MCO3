@@ -45,11 +45,22 @@
                 <p class="mm-message" id="mm-message">Greetings!</p> 
 
                 
-                <a href="/views/shared/login.html" class="mm-logoutlink"> 
+                <a href="#" class="mm-logoutlink" onclick="logout()"> 
                     <img src="/images/power-on.png" class="mm-logoutimg" />
                     <span>LOGOUT</span>
                 </a>
             </div>
         </div>
+
+        <!-- logout script -->
+        <script>
+            function logout() {
+                localStorage.removeItem("user");
+                localStorage.removeItem("userType");
+                sessionStorage.removeItem("user");
+                sessionStorage.removeItem("userType");
+                window.location.href = "/views/shared/login.html";
+            }
+        </script>
     </body>
 </html>

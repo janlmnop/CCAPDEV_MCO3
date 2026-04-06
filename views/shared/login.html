@@ -23,6 +23,11 @@
                 <input type="password" id="password" name="password" placeholder="PASSWORD"/>
             </div>
 
+            <div class="remember-me">
+                <input type="checkbox" id="remember-me">
+                <label for="remember-me">Remember Me</label>
+            </div>
+
             <div class="register">
                 <a href="/views/student/RegistrationPage.html">
                     <h1>Create Account</h1>
@@ -43,6 +48,19 @@
                 const errorPopup    = document.getElementById('error-popup');
                 const errorPopupMsg = document.getElementById('error-popup-msg');
                 const errorPopupOk  = document.getElementById('error-popup-ok');
+
+                const savedUser = localStorage.getItem("user") || sessionStorage.getItem("user");
+                const savedType = localStorage.getItem("userType") || sessionStorage.getItem("userType");
+
+                // auto-redirect if already logged in
+                if (savedUser && savedType) {
+                    if (savedType === "student") {
+                        window.location.href = "/views/student/mainmenu_student.html";
+                    } else if (savedType === "labtech") {
+                        window.location.href = "/views/labtech/mainmenu_labtech.html";
+                    }
+                    return;
+                }
 
                 // Hide button initially
                 activeBtn.style.display = 'none';
@@ -87,15 +105,22 @@
                         const data = await response.json();
 
                         if (response.ok && data.success) {
-                            // Save user info to localStorage so other pages can use it
-                            localStorage.setItem('user', JSON.stringify(data.user));
-                            localStorage.setItem('userType', data.type);
+                            const rememberMe = document.getElementById("remember-me").checked;
+                            
+                            if (rememberMe) {
+                                // Save user info to localStorage so other pages can use it
+                                localStorage.setItem('user', JSON.stringify(data.user));
+                                localStorage.setItem('userType', data.type);
+                            } else {
+                                sessionStorage.setItem("user", JSON.stringify(data.user));
+                                sessionStorage.setItem("userType", data.type);
+                            }
 
                             // Redirect based on user type
                             if (data.type === 'student') {
-                                window.location.href = '/views/student/mainmenu_student.html';      // NOTE : might be wrong
+                                window.location.href = '/views/student/mainmenu_student.html';  
                             } else if (data.type === 'labtech') {
-                                window.location.href = '/views/labtech/mainmenu_labtech.html';      // NOTE : might be wrong
+                                window.location.href = '/views/labtech/mainmenu_labtech.html';
                             }
                         } else {
                             // Show error message

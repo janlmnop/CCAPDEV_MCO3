@@ -1075,7 +1075,7 @@ async function getReservedStudentEmail() {
 
 function getOwnerLabel() {
     const reservedStudentId = getReservedForStudent();
-    const loggedInUser = JSON.parse(localStorage.getItem("user") || "{}");
+    const loggedInUser = JSON.parse(localStorage.getItem("user") || sessionStorage.getItem("user") || "{}");
 
     let baseLabel = "";
 
@@ -1284,7 +1284,7 @@ if (yesBtn) {
                 const selectedComp = Number(getSelectedComp());
                 const computerId = Number(getComputerId());
                 const reservedStudentId = getReservedForStudent();
-                const loggedInUser = JSON.parse(localStorage.getItem("user") || "{}");
+                const loggedInUser = JSON.parse(localStorage.getItem("user") || sessionStorage.getItem("user") || "{}");
                 const timeValues = getSelectedTimeValues();
 
                 if (!selectedLab || !selectedComp || !computerId || !currentScheduleDate || !timeValues) {

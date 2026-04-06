@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Lab World - Past Reservations</title>
     <link rel="stylesheet" href="/css/reservations.css">
+
 </head>
 <body>
 
@@ -12,9 +13,7 @@
     <div class="sidenav" id="sidenav">
         <img src="/images/logo copy.png" alt="Logo" class="nav-logo">
         <div class="nav-links">
-            <div id="nav-items">
-                <!-- populated by JS based on userType -->
-            </div>
+            <div id="nav-items"></div>
             <button class="nav-back-btn" onclick="history.back()">&lt; back</button>
         </div>
     </div>
@@ -36,7 +35,7 @@
 
             <div class="tab-labels">
                 <div class="tab-label active">Past</div>
-                <div class="tab-label"><a href="/views/shared/reservations_current.html">Current</a></div>
+                <div class="tab-label"><a id="current-tab-link" href="/views/shared/reservations_current.html">Current</a></div>
             </div>
 
             <div class="tab-inner">
@@ -66,13 +65,11 @@
                                 <th>Computer</th>
                             </tr>
                         </thead>
-                        <tbody id="reservations-tbody">
-                            <!-- Rows populated dynamically -->
-                        </tbody>
+                        <tbody id="reservations-tbody"></tbody>
                     </table>
                 </div>
 
-                <!-- Pagination below table -->
+                <!-- Pagination -->
                 <div class="pagination-btns">
                     <button class="page-btn" id="prevBtn">
                         <img src="/images/previous_logo.png" alt="Previous">
@@ -87,32 +84,19 @@
     </div>
 
     <script>
-        const API_BASE = "/api";
-        const userType = localStorage.getItem('userType') || sessionStorage.getItem("userType") || 'student';
+        const API_BASE     = "/api";
+        const userType     = localStorage.getItem('userType') || sessionStorage.getItem('userType') || 'student';
+        const loggedInUser = JSON.parse(localStorage.getItem('user') || sessionStorage.getItem('user') || '{}');
 
-        // ── USER ID LOGIC ──
-        const urlParams    = new URLSearchParams(window.location.search);
-        const viewStudent  = urlParams.get('view_student');
-        const loggedInUser = JSON.parse(localStorage.getItem('user') || sessionStorage.getItem("user") || '{}');
-        const userId       = viewStudent ? parseInt(viewStudent, 10) : loggedInUser._id;
-        const profileType  = viewStudent ? 'student' : userType;
+        const urlParams      = new URLSearchParams(window.location.search);
+        const viewStudent    = urlParams.get('view_student');
+        const userId         = viewStudent ? parseInt(viewStudent, 10) : loggedInUser._id;
+        const profileType    = viewStudent ? 'student' : userType;
 
-        // ── BACK BUTTON ──
-        const backBtn = document.getElementById('backBtn');
-        if (backBtn) {
-            if (viewStudent) {
-                backBtn.href = '/views/labtech/lt-ss.html';
-            } else {
-                backBtn.href = userType === 'labtech'
-                    ? '/views/labtech/userprofile_labtech.html'
-                    : '/views/student/userprofile_student.html';
-            }
-        }
-
-        // carry view_student param to the Current tab link
+        // carry view_student to Current tab
         if (viewStudent) {
-            const currentLink = document.querySelector('.tab-label a[href="/views/shared/reservations_current.html"]');
-            if (currentLink) currentLink.href = `reservations_current.html?view_student=${viewStudent}`;
+            const currentLink = document.getElementById('current-tab-link');
+            if (currentLink) currentLink.href = `/views/shared/reservations_current.html?view_student=${viewStudent}`;
         }
 
         // ── LOAD USER INFO ──
@@ -123,23 +107,21 @@
                     : `${API_BASE}/students/${userId}`;
                 const res  = await fetch(endpoint);
                 const data = await res.json();
-
                 document.getElementById('user-name').textContent   = data.name;
                 document.getElementById('user-id').textContent     = data._id;
                 document.getElementById('user-course').textContent = profileType === 'labtech'
                     ? data.job_title
                     : `${data.college_code} ${data.course_code}`;
-                document.getElementById('profile-pic').src =
-                    `/images/${data.profile_img || 'default.jpeg'}`;
+                document.getElementById('profile-pic').src = `/images/${data.profile_img || 'default.jpeg'}`;
             } catch (err) {
                 console.error("Failed to load user info:", err);
             }
         }
 
-        // ── FORMAT SLOT TIME ──
+        // ── FORMAT TIME ──
         function fmtSlot(s) {
             let h = parseInt(s.slice(0, 2));
-            const m      = s.slice(2);
+            const m = s.slice(2);
             const period = h >= 12 ? 'PM' : 'AM';
             if (h > 12) h -= 12;
             if (h === 0) h = 12;
@@ -149,9 +131,8 @@
         // ── LOAD RESERVATIONS ──
         async function loadReservations() {
             try {
-                const res   = await fetch(`${API_BASE}/reservations/${userId}`);
-                const all   = await res.json();
-                const today = new Date().toISOString().split('T')[0];
+                const res = await fetch(`${API_BASE}/reservations/${userId}`);
+                const all = await res.json();
 
                 // Past = completed status
                 const past = all.filter(r => r.status === 'completed');
@@ -160,22 +141,21 @@
                 tbody.innerHTML = '';
 
                 if (past.length === 0) {
-                    tbody.innerHTML = `<tr><td colspan="5" style="text-align:center;color:#9b7fe8;padding:20px;">No past reservations</td></tr>`;
+                    tbody.innerHTML = `<tr><td colspan="4" style="text-align:center;color:#9b7fe8;padding:20px;">No past reservations</td></tr>`;
                 } else {
                     past.forEach(r => {
-                        const startTime = r.start_time;
-                        const endTime = r.end_time;
-                        const timeStr = `${fmtSlot(startTime)}-${fmtSlot(endTime)}`;
+                        const timeStr = `${fmtSlot(r.start_time)}-${fmtSlot(r.end_time)}`;
                         const compNo  = String(r.computer_no).padStart(2, '0');
 
                         const tr = document.createElement('tr');
+
                         tr.innerHTML = `
-                            </td>
                             <td>${r.date}</td>
                             <td>${timeStr}</td>
                             <td>${r.lab_name}</td>
                             <td>${compNo}</td>
                         `;
+
                         tbody.appendChild(tr);
                     });
                 }
@@ -185,7 +165,7 @@
             } catch (err) {
                 console.error("Failed to load reservations:", err);
                 document.getElementById('reservations-tbody').innerHTML =
-                    `<tr><td colspan="5" style="text-align:center;color:#c87f7f;padding:20px;">Could not load reservations. Is the server running?</td></tr>`;
+                    `<tr><td colspan="4" style="text-align:center;color:#c87f7f;padding:20px;">Could not load reservations. Is the server running?</td></tr>`;
             }
         }
 
@@ -203,11 +183,7 @@
             if (currentPage > totalPages) currentPage = totalPages;
             const start = (currentPage - 1) * ROWS_PER_PAGE;
             const end   = start + ROWS_PER_PAGE;
-
-            allRows.forEach((row, i) => {
-                row.style.display = (i >= start && i < end) ? '' : 'none';
-            });
-
+            allRows.forEach((row, i) => { row.style.display = (i >= start && i < end) ? '' : 'none'; });
             document.getElementById('pageIndicator').textContent = `${currentPage} / ${totalPages}`;
             document.getElementById('prevBtn').disabled = currentPage === 1;
             document.getElementById('nextBtn').disabled = currentPage === totalPages;
@@ -224,7 +200,6 @@
         // ── FILTER DROPDOWN ──
         const filterDropdown = document.getElementById('filterDropdown');
         const filterBtn      = document.getElementById('filterBtn');
-
         filterBtn.addEventListener('click', (e) => {
             e.preventDefault(); e.stopPropagation();
             filterDropdown.classList.toggle('active');
@@ -235,7 +210,7 @@
 
         // ── SORTING ──
         function getColIndex(opt) {
-            return { 'Date': 1, 'Time': 2, 'Lab': 3, 'Computer': 4 }[opt];
+            return { 'Date': 0, 'Time': 1, 'Lab': 2, 'Computer': 3 }[opt];
         }
         function parseDate(s) { return new Date(s.trim()); }
         function parseTime(s) {
@@ -285,7 +260,6 @@
         (function buildNav() {
             const uType    = localStorage.getItem('userType') || 'student';
             const navItems = document.getElementById('nav-items');
-
             const studentLinks = [
                 { label: 'Home',              href: '/views/student/mainmenu_student.html' },
                 { label: 'Reserve Computer',  href: '/views/student/s-rc-ls.html' },
@@ -293,7 +267,6 @@
                 { label: 'View User Profile', href: '/views/student/userprofile_student.html' },
                 { label: 'View Reservations', href: '#', active: true }
             ];
-
             const labtechLinks = [
                 { label: 'Home',                href: '/views/labtech/mainmenu_labtech.html' },
                 { label: 'Manage Reservations', href: '/views/labtech/lt-rc-ls.html' },
@@ -302,9 +275,8 @@
                 { label: 'View User Profile',   href: '/views/labtech/userprofile_labtech.html' },
                 { label: viewStudent ? 'Viewing Student' : 'My Reservations', href: '#', active: true }
             ];
-
             const links = uType === 'labtech' ? labtechLinks : studentLinks;
-            links.forEach(function(link) {
+            links.forEach(function (link) {
                 const a = document.createElement('a');
                 a.href = link.href;
                 a.textContent = link.label;

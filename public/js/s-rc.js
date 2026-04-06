@@ -11,7 +11,7 @@ function formatDateValue(date) {
 
 function formatDateLabel(date) {
     return date.toLocaleDateString("en-PH", {
-        month: "short",1
+        month: "short",
         day: "numeric",
         year: "numeric"
     });

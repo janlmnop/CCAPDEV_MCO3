@@ -100,12 +100,14 @@
 
         // ── BACK BUTTON ──
         const backBtn = document.getElementById('backBtn');
-        if (viewStudent) {
-            backBtn.href = '/views/labtech/lt-ss.html';
-        } else {
-            backBtn.href = userType === 'labtech'
-                ? '/views/labtech/userprofile_labtech.html'
-                : '/views/student/userprofile_student.html';
+        if (backBtn) {
+            if (viewStudent) {
+                backBtn.href = '/views/labtech/lt-ss.html';
+            } else {
+                backBtn.href = userType === 'labtech'
+                    ? '/views/labtech/userprofile_labtech.html'
+                    : '/views/student/userprofile_student.html';
+            }
         }
 
         // carry view_student param to the Past tab link

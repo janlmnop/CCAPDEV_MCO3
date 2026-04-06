@@ -501,17 +501,26 @@ function fillSchedulePage() {
         const reservedInfo = getReservedSlotInfo(currentScheduleDate, slotIndex);
 
         if (reservedInfo) {
-            selectedScheduleSlots[currentScheduleDate] =
-                getSelectedSlotsForDate(currentScheduleDate).filter(function (indexValue) {
-                    return indexValue !== slotIndex;
-                });
-
             if (reservedInfo.isAnonymous) {
                 slotCell.textContent = "Anonymous";
-            } else if (reservedInfo.reservedBy && reservedInfo.reservedBy !== "Reserved") {
-                slotCell.textContent = reservedInfo.reservedBy;
             } else {
-                slotCell.textContent = "Reserved";
+                const displayName = reservedInfo.reservedBy || "Reserved";
+                const currentUserId = String(getCurrentStudentId() || "");
+                const reservedUserId = String(reservedInfo.userId || "");
+        
+                if (reservedUserId) {
+                    let profileUrl = "";
+        
+                    if (reservedUserId === currentUserId) {
+                        profileUrl = "/views/student/userprofile_student.html";
+                    } else {
+                        profileUrl = `/views/other-student/userprofile_student_other.html?student_id=${reservedUserId}`;
+                    }
+        
+                    slotCell.innerHTML = `<a href="${profileUrl}">${displayName}</a>`;
+                } else {
+                    slotCell.textContent = displayName;
+                }
             }
         } else {
             slotCell.innerHTML = "";

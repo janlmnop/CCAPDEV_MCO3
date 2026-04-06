@@ -166,7 +166,7 @@
                 } else {
                     current.forEach(r => {
                         const slots   = r.slots;
-                        const timeStr = `${fmtSlot(slots[0])}-${fmtSlot(slots[slots.length - 1])}`;
+                        const timeStr = `${fmtSlot(slots[0])}-${fmtSlot(addThirtyMin(slots[slots.length - 1]))}`;
                         const compNo  = String(r.computer_no).padStart(2, '0');
 
                         const tr = document.createElement('tr');

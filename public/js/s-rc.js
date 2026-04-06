@@ -172,11 +172,6 @@ function getCurrentStudentName() {
     return loggedInUser.name || "";
 }
 
-function getCurrentStudentName() {
-    const loggedInUser = getLoggedInUser();
-    return loggedInUser.name || loggedInUser.name || "";
-}
-
 function getComputerId() {
     const selectedLab = Number(getSelectedLab());
     const selectedComp = Number(getSelectedComp());

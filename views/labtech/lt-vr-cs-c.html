@@ -1,0 +1,164 @@
+<html>
+
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+	
+    <link rel="stylesheet" href="/css/lt-rc.css">
+</head>
+
+<body>
+	<!-- NEW : side navigation -->
+	<div class="sidenav">
+		<img src="/images/logo copy.png" />
+		<div class="links">
+			<div>
+				<a href="/views/labtech//mainmenu_labtech.html">Home</a>
+				<a href="/views/labtech//lt-vr-ls.html">View Reservations</a>
+				<a href="/views/labtech//lt-ss.html">Student Search</a>
+				<a href="/views/labtech//userprofile_labtech.html">View User Profile</a>
+			</div>
+			<button class="back-btn" onclick="history.back()">&lt; back</button>
+		</div>  
+	</div>
+
+    <div class="container">
+	
+        <div class="header">
+		
+            <p class="title">View Reservations</p>
+			
+        </div>
+
+        <div class="main-content">
+		
+            <div class="panel right-panel">
+				<div class="panel-header">
+                    <p class="panel-title" id="view-res-panel-title"></p>
+                </div>
+				
+                <div class="panel-body">
+				
+					<div class="comp-anon">
+						<div class="comp-res l1">
+							<div class="comp-icon-frame">
+								<img src="/images/comp logo.png" class="comp-icon"/>
+							</div>
+							
+							<div class="comp-title" id="view-comp-title"></div>
+						</div>
+					</div>
+					
+					<div class="comp-sched">
+						<p class="res-title">Reservations</p>
+						
+						<div class="sched">
+							<div class="sched-date">
+								<select class="date-title enabled" id="date-title">
+								<option value="">Select date</option>
+							</select>
+							</div>
+
+							<div class="sched-table" id="sched-table">
+								<div class="res-row">
+									<input class="res-check" type="checkbox"/>
+								
+									<div class="comp-time"></div>
+								
+									<div class="slot"></div>
+								</div>
+								
+								<div class="res-row">
+									<input class="res-check" type="checkbox"/>
+								
+									<div class="comp-time"></div>
+								
+									<div class="slot"></div>
+								</div>
+								
+								<div class="res-row">
+									<input class="res-check" type="checkbox">
+								
+									<div class="comp-time"></div>
+								
+									<div class="slot"></div>
+								</div>
+								
+								<div class="res-row">
+									<input class="res-check" type="checkbox">
+								
+									<div class="comp-time"></div>
+								
+									<div class="slot"></div>
+								</div>
+
+								<div class="res-row">
+									<input class="res-check" type="checkbox"/>
+								
+									<div class="comp-time"></div>
+								
+									<div class="slot"></div>
+								</div>
+
+								<div class="res-row">
+									<input class="res-check" type="checkbox">
+								
+									<div class="comp-time"></div>
+								
+									<div class="slot"></div>
+								</div>
+							</div>
+						</div>
+						
+						<div class="sched-navigation">
+							<p class="prev" id="prev">Prev</p>
+							<p class="next" id="next">Next</p>
+						</div>
+					</div>
+					
+					<div class="confirm-res">
+						<div class="confirm-details">
+							<div class="confirm date-select">
+								<p>Date:</p>
+								<p></p>
+							</div>
+							
+							<div class="confirm time-select">
+								<p>Time slot:</p>
+								<p></p>
+							</div>
+						</div>
+						
+						<div class="check">
+							<button class="confirm-btn enabled" id="edit-btn">Edit<br>Reservation</button>
+							
+							<button class="confirm-btn enabled" id="confirm-btn">Delete<br>Reservation</button>
+						</div>
+					</div>
+					
+				</div>
+            </div>
+			
+        </div>
+    </div>
+	
+	<div class="confirm-popup" id="confirm-popup">
+		<p class="confirm-title">Delete Reservation?</p>
+		<br>
+		<p>Laboratory: </p>
+		<p>Computer: </p>
+		<p>Date: </p>
+		<p>Time Slot: </p>
+		<p>Set under: </p>
+		<br>
+		
+		<div class="popup-btn">
+			<button class="yes-btn" id="yes-btn">Yes</button>
+			<button class="no-btn" id="no-btn">No</button>
+		</div>
+	</div>
+	
+	<script src="/js/lt-rc.js"></script>
+	
+</body>
+
+</html>

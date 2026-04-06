@@ -1,0 +1,163 @@
+<!DOCTYPE HTML>
+<html>
+    <head>
+        <title>Login</title>
+        <link rel="stylesheet" type="text/css" media="all" href="/css/login.css">
+    </head>
+
+    <body>
+        <div class="whole">
+            <div class="logo"> 
+                <img src="/images/logo.png"></img> 
+            </div>
+
+            <div class="loginbox">
+                <img src="/images/logbox.png"></img>
+            </div>
+
+            <div class="username">
+                <input type="text" id="username" name="username" placeholder="USER ID"/>
+            </div>
+
+            <div class="password">
+                <input type="password" id="password" name="password" placeholder="PASSWORD"/>
+            </div>
+
+            <div class="remember-me">
+                <input type="checkbox" id="remember-me">
+                <label for="remember-me">Remember Me</label>
+            </div>
+
+            <div class="register">
+                <a href="/views/student/RegistrationPage.html">
+                    <h1>Create Account</h1>
+                </a>
+            </div>
+
+            <div class="active" id="active-btn">
+                <img src="/images/active.png" id="login-img" style="cursor:pointer;"></img>
+            </div>
+        </div>
+
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                const usernameInput = document.getElementById('username');
+                const passwordInput = document.getElementById('password');
+                const activeBtn     = document.getElementById('active-btn');
+                const loginImg      = document.getElementById('login-img');
+                const errorPopup    = document.getElementById('error-popup');
+                const errorPopupMsg = document.getElementById('error-popup-msg');
+                const errorPopupOk  = document.getElementById('error-popup-ok');
+
+                const savedUser = localStorage.getItem("user") || sessionStorage.getItem("user");
+                const savedType = localStorage.getItem("userType") || sessionStorage.getItem("userType");
+
+                // auto-redirect if already logged in
+                if (savedUser && savedType) {
+                    if (savedType === "student") {
+                        window.location.href = "/views/student/mainmenu_student.html";
+                    } else if (savedType === "labtech") {
+                        window.location.href = "/views/labtech/mainmenu_labtech.html";
+                    }
+                    return;
+                }
+
+                // Hide button initially
+                activeBtn.style.display = 'none';
+
+                // Show/hide button based on input
+                function validateForm() {
+                    if (usernameInput.value.trim() !== '' && passwordInput.value.trim() !== '') {
+                        activeBtn.style.display = 'block';
+                    } else {
+                        activeBtn.style.display = 'none';
+                    }
+                }
+
+                usernameInput.addEventListener('keyup', validateForm);
+                passwordInput.addEventListener('keyup', validateForm);
+
+                // Allow pressing Enter to log in
+                passwordInput.addEventListener('keydown', function (e) {
+                    if (e.key === 'Enter') attemptLogin();
+                });
+
+                // Click on the START GAME button image
+                loginImg.addEventListener('click', attemptLogin);
+
+                async function attemptLogin() {
+                    const username = usernameInput.value.trim();
+                    const password = passwordInput.value.trim();
+
+                    if (!username || !password) return;
+
+                    // Disable button while waiting
+                    loginImg.style.opacity = '0.5';
+                    loginImg.style.pointerEvents = 'none';
+
+                    try {
+                        const response = await fetch('/api/auth/login', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ username, password })
+                        });
+
+                        const data = await response.json();
+
+                        if (response.ok && data.success) {
+                            const rememberMe = document.getElementById("remember-me").checked;
+                            
+                            if (rememberMe) {
+                                // Save user info to localStorage so other pages can use it
+                                localStorage.setItem('user', JSON.stringify(data.user));
+                                localStorage.setItem('userType', data.type);
+                            } else {
+                                sessionStorage.setItem("user", JSON.stringify(data.user));
+                                sessionStorage.setItem("userType", data.type);
+                            }
+
+                            // Redirect based on user type
+                            if (data.type === 'student') {
+                                window.location.href = '/views/student/mainmenu_student.html';  
+                            } else if (data.type === 'labtech') {
+                                window.location.href = '/views/labtech/mainmenu_labtech.html';
+                            }
+                        } else {
+                            // Show error message
+                            showError(data.message || 'Invalid username or password.');
+                        }
+
+                    } catch (err) {
+                        showError('Could not connect to server. Make sure it is running.');
+                    } finally {
+                        loginImg.style.opacity = '1';
+                        loginImg.style.pointerEvents = 'auto';
+                    }
+                }
+
+                function showError(msg) {
+                    errorPopupMsg.textContent = msg;
+                    errorPopup.style.display = 'flex';
+                }
+
+                errorPopupOk.addEventListener('click', function () {
+                    errorPopup.style.display = 'none';
+                });
+            });
+        </script>
+
+        <!-- Error popup -->
+        <div id="error-popup" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:999; justify-content:center; align-items:center;">
+            <div style="background:#1e1a3a; border:3px solid #7962c8; border-radius:16px; padding:40px 50px; text-align:center; max-width:400px;">
+                <p id="error-popup-msg" style="color:#ff6b6b; font-family:'Nine by Five',sans-serif; font-size:22px; margin-bottom:24px;"></p>
+                <button id="error-popup-ok" style="background:#7962c8; color:white; border:none; border-radius:50px; padding:10px 40px; font-family:'Nine by Five',sans-serif; font-size:20px; cursor:pointer;">OK</button>
+            </div>
+        </div>
+
+        <style>
+            #error-popup-ok:hover {
+                background: #9a7fe0;
+            }
+        </style>
+    </body>
+</html>

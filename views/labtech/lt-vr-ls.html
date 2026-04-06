@@ -1,0 +1,184 @@
+<html>
+
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+	
+    <title>View Reservations - Lab Selection</title>
+    <link rel="stylesheet" href="/css/lt-rc.css">
+</head>
+
+<body>
+	<!-- NEW : side navigation -->
+	<div class="sidenav">
+		<img src="/images/logo copy.png" />
+		<div class="links">
+			<div>
+				<a href="/views/labtech/mainmenu_labtech.html">Home</a>
+				<a href="" style="font-weight: bold;">View Reservations</a>
+				<a href="/views/labtech//lt-ss.html">Student Search</a>
+				<a href="/views/labtech//userprofile_labtech.html">View User Profile</a>
+			</div>
+			<button class="back-btn" onclick="history.back()">&lt; back</button>
+		</div>  
+	</div>
+
+    <div class="container">
+	
+        <div class="header">
+		
+            <p class="title">View Reservations</p>
+            <p class="subtitle">Select laboratory.</p>
+			
+        </div>
+
+        <div class="main-content">
+		
+			<div class="panel left-panel">
+				<div class="panel-title">
+					<p>Reservation Details</p>
+				</div>
+				
+				<div class="panel-content">
+					<div class="date-time">
+						<div class="row date">
+							<p>Date:</p>
+							<p class="cur-date" id="cur-date"></p>
+						</div>
+						
+						<div class="row time">
+							<p>Time Slot:</p>
+							<p class="cur-time" id="cur-time"></p>
+						</div>
+					</div>
+				
+					<div class="res active">
+						<p class="active-title">Ongoing Reservations</p>
+					
+						<div class="labs">
+							<div class="lab-row">
+								<p class="lab-name-active">Lab 1:</p>
+								<p class="lab-name-active" id="lab1-ongoing"></p>
+							</div>
+							
+							<div class="lab-row">
+								<p class="lab-name-active">Lab 2:</p>
+								<p class="lab-name-active" id="lab2-ongoing"></p>
+							</div>
+							
+							<div class="lab-row">
+								<p class="lab-name-active">Lab 3:</p>
+								<p class="lab-name-active" id="lab3-ongoing"></p>
+							</div>
+							
+							<div class="lab-row">
+								<p class="lab-name-active">Lab 4:</p>
+								<p class="lab-name-active" id="lab4-ongoing"></p>
+							</div>
+							
+							<div class="lab-row">
+								<p class="lab-name-active">Lab 5:</p>
+								<p class="lab-name-active" id="lab5-ongoing"></p>
+							</div>
+						</div>
+					</div>
+				</div>
+            </div>
+			
+			<div class="vl"></div>
+		
+            <div class="panel right-panel">
+				<div class="panel-header">
+                    <p class="panel-title">Laboratory Selection</p>
+                </div>
+				
+                <div class="panel-body">
+					<div class="lab l1">
+						<div class="lab-icon-frame">
+							<img src="/images/lab logo.png" class="lab-icon"/>
+						</div>
+						
+						<div class="lab-title">
+							<p><a href="/views/labtech/lt-vr-cs.html?lab=1">Lab 1</a></p>
+						</div>
+						
+						<div class="lab-details">
+							<p>Room Number:<br>GK101</p>
+							<br>
+							<p class="hours">Lab Hours:<br>8:00AM - 8:00PM</p>
+						</div>
+					</div>
+					
+					<div class="lab l2">
+						<div class="lab-icon-frame">
+							<img src="/images/lab logo.png" class="lab-icon"/>
+						</div>
+						
+						<div class="lab-title">
+							<p><a href="/views/labtech/lt-vr-cs.html?lab=2">Lab 2</a></p>
+						</div>
+						
+						<div class="lab-details">
+							<p>Room Number:<br>GK102</p>
+							<br>
+							<p class="hours">Lab Hours:<br>8:00AM - 8:00PM</p>
+						</div>
+					</div>
+					
+					<div class="lab l3">
+						<div class="lab-icon-frame">
+							<img src="/images/lab logo.png" class="lab-icon"/>
+						</div>
+						
+						<div class="lab-title">
+							<p><a href="/views/labtech/lt-vr-cs.html?lab=3">Lab 3</a></p>
+						</div>
+						
+						<div class="lab-details">
+							<p>Room Number:<br>GK103</p>
+							<br>
+							<p class="hours">Lab Hours:<br>8:00AM - 8:00PM</p>
+						</div>
+					</div>
+					
+					<div class="lab l4">
+						<div class="lab-icon-frame">
+							<img src="/images/lab logo.png" class="lab-icon"/>
+						</div>
+						
+						<div class="lab-title">
+							<p><a href="/views/labtech/lt-vr-cs.html?lab=4">Lab 4</a></p>
+						</div>
+						
+						<div class="lab-details">
+							<p>Room Number:<br>GK104</p>
+							<br>
+							<p class="hours">Lab Hours:<br>8:00AM - 8:00PM</p>
+						</div>
+					</div>
+					
+					<div class="lab l5">
+						<div class="lab-icon-frame">
+							<img src="/images/lab logo.png" class="lab-icon"/>
+						</div>
+						
+						<div class="lab-title">
+							<p><a href="/views/labtech/lt-vr-cs.html?lab=5">Lab 5</a></p>
+						</div>
+						
+						<div class="lab-details">
+							<p>Room Number:<br>GK105</p>
+							<br>
+							<p class="hours">Lab Hours:<br>8:00AM - 8:00PM</p>
+						</div>
+					</div>
+				</div>
+            </div>
+			
+        </div>
+    </div>
+	
+	<script src="/js/lt-rc.js"></script>
+	
+</body>
+
+</html>

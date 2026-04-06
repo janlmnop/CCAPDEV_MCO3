@@ -1,0 +1,518 @@
+@font-face {
+    font-family: 'Nine0';
+    src: url('/nine0.ttf'); 
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    width: 100vw;
+    height: 100vh;
+    position: relative;
+    overflow: hidden;
+    font-family: 'Nine0', 'Courier New', monospace;
+    background-image: url("/images/bg.png");
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+/* ── SIDENAV ── */
+.sidenav {
+    height: 100%;
+    width: 160px;
+    position: fixed;
+    z-index: 100;
+    top: 0;
+    left: 0;
+    background-color: #7962C8;
+    overflow-x: hidden;
+    padding-top: 20px;
+    display: flex;
+    flex-direction: column;
+}
+
+.sidenav img.nav-logo {
+    height: 110px;
+    display: block;
+    margin: 0 auto;
+}
+
+.sidenav .nav-links {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    flex: 1;
+    padding-bottom: 20px;
+}
+
+.sidenav a {
+    padding: 20px 8px 6px 16px;
+    text-decoration: none;
+    font-size: 20px;
+    color: black;
+    display: block;
+    font-family: 'Nine0', monospace;
+}
+
+.sidenav a:hover {
+    color: #f1f1f1;
+}
+
+.sidenav a.active-link {
+    font-weight: bold;
+}
+
+.sidenav .nav-back-btn {
+    font-family: 'Nine0', monospace;
+    font-size: 20px;
+    background-color: transparent;
+    border-color: transparent;
+    color: black;
+    cursor: pointer;
+    padding: 6px 8px 6px 16px;
+    text-align: left;
+}
+
+.sidenav .nav-back-btn:hover {
+    color: #f1f1f1;
+}
+
+
+.left-panel {
+    position: absolute;
+    top: 180px;
+    left: 220px;
+    width: 280px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 14px;
+}
+
+.user-picture {
+    width: 220px;
+    height: 220px;
+    object-fit: cover;
+}
+
+.user-name {
+    color: #ffffff;
+    font-family: 'Nine0', monospace;
+    font-size: 42px;
+    text-align: left;
+    letter-spacing: 1px;
+}
+
+.user-id,
+.user-course {
+    color: #c0b8e8;
+    font-family: 'Nine0', monospace;
+    font-size: 28px;
+    text-align: left;
+    letter-spacing: 1px;
+}
+
+.back-btn {
+    margin-top: 20px;
+    cursor: pointer;
+    display: block;
+    border: none;
+    background: transparent;
+    padding: 0;
+    text-decoration: none;
+}
+
+.back-btn img {
+    width: 220px;
+    height: auto;
+    display: block;
+    transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+.back-btn:hover img {
+    opacity: 0.85;
+    transform: scale(1.03);
+}
+
+/* ── MAIN CONTENT (right side) ── */
+.main-content {
+    position: absolute;
+    top: 60px;
+    left: 550px;
+    right: 60px;
+    bottom: 60px;
+}
+
+/* ── TITLE ── */
+.page-title {
+    font-family: 'Nine0', monospace;
+    font-size: 80px;
+    color: #ffffff;
+    letter-spacing: 3px;
+    margin-bottom: 18px;
+    text-shadow: 0 0 20px rgba(160, 130, 255, 0.6);
+}
+
+/* ── TAB CONTAINER ── */
+.tab-container {
+    position: relative;
+    width: 100%;
+    height: 580px;
+}
+
+.tab-bg {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: fill;
+    z-index: 0;
+}
+
+/* ── TAB LABELS (Current / Past) ── */
+.tab-labels {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    display: flex;
+    z-index: 2;
+}
+
+.tab-label {
+    flex: 1;
+    height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Nine0', monospace;
+    font-size: 35px;
+    color: #4a3a6a;
+    cursor: default;
+    user-select: none;
+    letter-spacing: 1px;
+}
+
+.tab-label.active {
+    color: #2a1a4a;
+}
+
+.tab-label a {
+    color: #4a3a6a;
+    text-decoration: none;
+    font-family: 'Nine0', monospace;
+    font-size: 35px;
+    letter-spacing: 1px;
+    transition: color 0.2s ease, text-shadow 0.2s ease;
+}
+
+.tab-label a:hover {
+    color: #2a1a4a;
+    text-shadow: 0 0 8px rgba(100, 80, 160, 0.5);
+}
+
+/* ── INNER PANEL ── */
+.tab-inner {
+    position: absolute;
+    top: 62px;
+    left: 16px;
+    right: 16px;
+    bottom: 16px;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    padding: 24px 28px 20px;
+}
+
+/* ── FILTER ROW ── */
+.filter-row {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 18px;
+    position: relative;
+    z-index: 10;
+}
+
+/* ── PAGINATION BUTTONS ── */
+.pagination-btns {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 4px;
+    margin-top: 8px;
+    width: 97%;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.page-btn {
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    display: block;
+    transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+.page-btn img {
+    height: 30px;
+    width: auto;
+    display: block;
+}
+
+.page-btn:hover img {
+    opacity: 0.8;
+    transform: scale(1.05);
+}
+
+.page-btn:disabled {
+    opacity: 0.3;
+    cursor: default;
+    pointer-events: none;
+}
+
+.page-indicator {
+    color: #7962C8;
+    font-family: 'Nine0', monospace;
+    font-size: 18px;
+    letter-spacing: 1px;
+    min-width: 30px;
+    text-align: center;
+}
+
+.filter-dropdown {
+    position: relative;
+}
+
+.filter-btn {
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    display: block;
+}
+
+.filter-btn img {
+    width: 180px;
+    height: auto;
+    display: block;
+    transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+.filter-btn:hover img {
+    opacity: 0.85;
+    transform: scale(1.02);
+}
+
+.filter-content {
+    display: none;
+    position: absolute;
+    top: calc(100% + 6px);
+    right: 0;
+    background: rgba(20, 15, 40, 0.97);
+    border: 2px solid #9b7fe8;
+    min-width: 160px;
+    z-index: 20;
+}
+
+.filter-dropdown.active .filter-content,
+.filter-dropdown:hover .filter-content {
+    display: block;
+}
+
+.filter-option {
+    padding: 11px 18px;
+    cursor: pointer;
+    color: #c0b8e8;
+    font-family: 'Nine0', monospace;
+    font-size: 20px;
+    letter-spacing: 1px;
+    transition: background 0.2s ease, color 0.2s ease;
+}
+
+.filter-option:hover {
+    background: rgba(155, 127, 232, 0.2);
+    color: #ffffff;
+}
+
+/* ── TABLE WRAPPER ── */
+.table-wrapper {
+    position: relative;
+    flex: 1;
+    border: 3px solid #7962C8;
+    border-radius: 0;
+    overflow: auto;
+    background: transparent;
+    width: 97%;
+    margin: 0 auto;
+    max-height: 74%;    
+    margin-top: 25px;
+}
+
+.table-bg {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: fill;
+    z-index: 0;
+    border-radius: 0;
+}
+
+.reservations-table {
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    height: 100%;
+    table-layout: fixed;
+    border-collapse: collapse;
+    font-family: 'Nine0', monospace;
+}
+
+/* Equal width for all columns */
+.reservations-table colgroup col {
+    width: 20%;
+}
+
+.reservations-table th,
+.reservations-table td {
+    width: 23%;
+}
+
+.reservations-table thead tr th.select-col,
+.reservations-table tbody tr td:first-child {
+    width: 8%;
+}
+
+/* Table header styles - BLACK TEXT with vertical dividers */
+.reservations-table thead tr th {
+    padding: 10px 8px;
+    font-size: 23px;
+    font-weight: bold;
+    color: #000000;
+    letter-spacing: 1px;
+    border-bottom: 2px solid #7962C8;
+    border-right: 2px solid #7962C8;
+    text-align: center;
+    background: rgba(121, 98, 200, 0.05);
+}
+
+.reservations-table thead tr th:last-child {
+    border-right: none;
+}
+
+.reservations-table thead tr th.select-col {
+    font-size: 23px;
+    font-weight: bold;
+    color: #000000;
+    text-align: center;
+    border-right: 2px solid #7962C8;
+}
+
+/* Table body styles */
+.reservations-table tbody tr td {
+    padding: 10px 8px;
+    font-size: 23px;
+    color: #000000;
+    text-align: center;
+    border-bottom: 1px solid #7962C8;
+    border-right: 1px solid #7962C8;
+    vertical-align: middle;
+    font-weight: 500;
+}
+
+.reservations-table tbody tr td:last-child {
+    border-right: none;
+}
+
+.reservations-table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+.reservations-table tbody tr:hover td {
+    background-color: rgba(121, 98, 200, 0.1);
+    transition: background-color 0.2s ease;
+}
+
+/* ── REAL CHECKBOX STYLES ── */
+.checkbox-cell {
+    text-align: center;
+    vertical-align: middle;
+    padding: 0;
+}
+
+/* Hide the default checkbox appearance */
+.res-checkbox {
+    appearance: none;
+    -webkit-appearance: none;
+    width: 22px;
+    height: 22px;
+    border: 3px solid #7962C8;
+    background-color: #baaee4;
+    cursor: pointer;
+    position: relative;
+    display: inline-block;
+    vertical-align: middle;
+    transition: background-color 0.15s ease, border-color 0.15s ease, transform 0.1s ease;
+    border-radius: 4px;
+}
+
+/* Hover state */
+.res-checkbox:hover {
+    border-color: #5a48a8;
+    background-color: #a99dd4;
+    transform: scale(1.1);
+}
+
+/* Checked state — draw a checkmark via pseudo-element */
+.res-checkbox:checked {
+    background-color: #7962C8;
+    border-color: #5a48a8;
+}
+
+.res-checkbox:checked::after {
+    content: "\2714";
+    color: #ffffff;
+    font-size: 14px;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    line-height: 1;
+}
+
+/* Focus ring for keyboard accessibility */
+.res-checkbox:focus {
+    outline: 2px solid #9b7fe8;
+    outline-offset: 2px;
+}
+
+/* Responsive adjustments */
+@media (max-width: 1200px) {
+    .res-checkbox {
+        width: 18px;
+        height: 18px;
+    }
+
+    .res-checkbox:checked::after {
+        font-size: 11px;
+    }
+
+    .reservations-table tbody tr td {
+        font-size: 16px;
+    }
+
+    .reservations-table th,
+    .reservations-table td {
+        padding: 8px 5px;
+    }
+}

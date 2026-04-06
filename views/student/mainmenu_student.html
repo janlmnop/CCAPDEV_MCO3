@@ -1,0 +1,66 @@
+<!------------------------------------------------------
+    MAIN MENU (Student)
+
+------------------------------------------------------->
+
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Main Menu (Student)</title>
+        <link rel="stylesheet" href="/css/main-menu.css">
+    </head>
+
+    <body>
+        <div class="mm-container">
+            <img src="/images/logo copy.png" class="mm-logo" />
+
+            <table>
+                <tr>
+                    <td colspan="2">
+                        <a href="/views/student/s-rc-ls.html" class="mm-link"> <!-- insert link to "reserve computer" here -->
+                            <img src="/images/right-arrow.png" class="mm-arrow" />
+                            <span>RESERVE COMPUTER</span>
+                        </a>
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="2">
+                        <a href="/views/student/s-ss.html" class="mm-link"> <!-- insert link to "student search" here -->
+                            <img src="/images/right-arrow.png" class="mm-arrow" />
+                            <span>STUDENT SEARCH</span>
+                        </a>
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="2">
+                        <a href="/views/student/userprofile_student.html" class="mm-link"> <!-- insert link to "view user profile" here -->
+                            <img src="/images/right-arrow.png" class="mm-arrow" />
+                            <span>VIEW USER PROFILE</span>
+                        </a>
+                    </td>
+                </tr>
+            </table>
+
+            <div class="mm-navigation">
+                <p class="mm-message" id="mm-message">Greetings!</p> 
+
+                
+                <a href="#" class="mm-logoutlink" onclick="logout()"> 
+                    <img src="/images/power-on.png" class="mm-logoutimg" />
+                    <span>LOGOUT</span>
+                </a>
+            </div>
+        </div>
+
+        <!-- logout script -->
+        <script>
+            function logout() {
+                localStorage.removeItem("user");
+                localStorage.removeItem("userType");
+                sessionStorage.removeItem("user");
+                sessionStorage.removeItem("userType");
+                window.location.href = "/views/shared/login.html";
+            }
+        </script>
+    </body>
+</html>

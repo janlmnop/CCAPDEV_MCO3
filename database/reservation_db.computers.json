@@ -1,0 +1,262 @@
+[{
+    "_id": 1,
+    "lab_id": 1,
+    "computer_no": 1
+},
+{
+    "_id": 2,
+    "lab_id": 1,
+    "computer_no": 2
+},
+{
+    "_id": 3,
+    "lab_id": 1,
+    "computer_no": 3
+},
+{
+    "_id": 4,
+    "lab_id": 1,
+    "computer_no": 4
+},
+{
+    "_id": 5,
+    "lab_id": 1,
+    "computer_no": 5
+},
+{
+    "_id": 6,
+    "lab_id": 1,
+    "computer_no": 6
+},
+{
+    "_id": 7,
+    "lab_id": 1,
+    "computer_no": 7
+},
+{
+    "_id": 8,
+    "lab_id": 1,
+    "computer_no": 8
+},
+{
+    "_id": 9,
+    "lab_id": 1,
+    "computer_no": 9
+},
+{
+    "_id": 10,
+    "lab_id": 1,
+    "computer_no": 10
+},
+
+
+
+{
+    "_id": 11,
+    "lab_id": 2,
+    "computer_no": 1
+},
+{
+    "_id": 12,
+    "lab_id": 2,
+    "computer_no": 2
+},
+{
+    "_id": 13,
+    "lab_id": 2,
+    "computer_no": 3
+},
+{
+    "_id": 14,
+    "lab_id": 2,
+    "computer_no": 4
+},
+{
+    "_id": 15,
+    "lab_id": 2,
+    "computer_no": 5
+},
+{
+    "_id": 16,
+    "lab_id": 2,
+    "computer_no": 6
+},
+{
+    "_id": 17,
+    "lab_id": 2,
+    "computer_no": 7
+},
+{
+    "_id": 18,
+    "lab_id": 2,
+    "computer_no": 8
+},
+{
+    "_id": 19,
+    "lab_id": 2,
+    "computer_no": 9
+},
+{
+    "_id": 20,
+    "lab_id": 2,
+    "computer_no": 10
+},
+
+
+
+{
+    "_id": 21,
+    "lab_id": 3,
+    "computer_no": 1
+},
+{
+    "_id": 22,
+    "lab_id": 3,
+    "computer_no": 2
+},
+{
+    "_id": 23,
+    "lab_id": 3,
+    "computer_no": 3
+},
+{
+    "_id": 24,
+    "lab_id": 3,
+    "computer_no": 4
+},
+{
+    "_id": 25,
+    "lab_id": 3,
+    "computer_no": 5
+},
+{
+    "_id": 26,
+    "lab_id": 3,
+    "computer_no": 6
+},
+{
+    "_id": 27,
+    "lab_id": 3,
+    "computer_no": 7
+},
+{
+    "_id": 28,
+    "lab_id": 3,
+    "computer_no": 8
+},
+{
+    "_id": 29,
+    "lab_id": 3,
+    "computer_no": 9
+},
+{
+    "_id": 30,
+    "lab_id": 3,
+    "computer_no": 10
+},
+
+
+
+{
+    "_id": 31,
+    "lab_id": 4,
+    "computer_no": 1
+},
+{
+    "_id": 32,
+    "lab_id": 4,
+    "computer_no": 2
+},
+{
+    "_id": 33,
+    "lab_id": 4,
+    "computer_no": 3
+},
+{
+    "_id": 34,
+    "lab_id": 4,
+    "computer_no": 4
+},
+{
+    "_id": 35,
+    "lab_id": 4,
+    "computer_no": 5
+},
+{
+    "_id": 36,
+    "lab_id": 4,
+    "computer_no": 6
+},
+{
+    "_id": 37,
+    "lab_id": 4,
+    "computer_no": 7
+},
+{
+    "_id": 38,
+    "lab_id": 4,
+    "computer_no": 8
+},
+{
+    "_id": 39,
+    "lab_id": 4,
+    "computer_no": 9
+},
+{
+    "_id": 40,
+    "lab_id": 4,
+    "computer_no": 10
+},
+
+
+
+{
+    "_id": 41,
+    "lab_id": 5,
+    "computer_no": 1
+},
+{
+    "_id": 42,
+    "lab_id": 5,
+    "computer_no": 2
+},
+{
+    "_id": 43,
+    "lab_id": 5,
+    "computer_no": 3
+},
+{
+    "_id": 44,
+    "lab_id": 5,
+    "computer_no": 4
+},
+{
+    "_id": 45,
+    "lab_id": 5,
+    "computer_no": 5
+},
+{
+    "_id": 46,
+    "lab_id": 5,
+    "computer_no": 6
+},
+{
+    "_id": 47,
+    "lab_id": 5,
+    "computer_no": 7
+},
+{
+    "_id": 48,
+    "lab_id": 5,
+    "computer_no": 8
+},
+{
+    "_id": 49,
+    "lab_id": 5,
+    "computer_no": 9
+},
+{
+    "_id": 50,
+    "lab_id": 5,
+    "computer_no": 10
+}]

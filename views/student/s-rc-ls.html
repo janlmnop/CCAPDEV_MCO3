@@ -1,0 +1,201 @@
+<html>
+
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+	
+    <title>Reserve Computer - Lab Selection</title>
+    <link rel="stylesheet" href="/css/s-rc.css">
+</head>
+
+<body>
+	<div class="sidenav">
+		<img src="/images/logo copy.png" />
+		<div class="links">
+			<div>
+				<a href="/views/student/mainmenu_student.html">Home</a>
+				<a href="" style="font-weight: bold;">Reserve Computer</a>
+				<a href="/views/student/s-ss.html">Student Search</a>
+				<a href="/views/student/userprofile_student.html">View User Profile</a>
+			</div>
+			<button class="back-btn" onclick="history.back()">&lt; back</button>
+		</div>  
+	</div>
+
+    <div class="container">
+	
+        <div class="header">
+		
+            <p class="title">Reserve Computer</p>
+            <p class="subtitle">Select preferred laboratory or set reservation details.</p>
+			
+        </div>
+
+        <div class="main-content">
+		
+            <div class="panel left-panel">
+				<div class="panel-title">
+					<p>Reservation Details</p> 
+				</div>
+				
+				<div class="panel-content">
+					<div class="res-details">
+						<div class="row date">
+							<label for="date">Date:</label>
+							<select class="res-date enabled" id="res-date">
+								<option value="">Select date</option>
+							</select>
+						</div>
+						
+						<div class="row time">
+							<label>Start time: </label>
+							<select class="res-time enabled" id="start-time">
+								<option value="">Select start time</option>
+							</select>
+						</div>
+						
+						<div class="row time">
+							<label>End time: </label>
+							<select class="res-time enabled" id="end-time">
+								<option value="">Select end time</option>
+							</select>
+						</div>
+					</div>
+					
+					<div class="check">
+						<button class="avail-btn enabled" id="lab-avail-btn">Check availability</button>
+						
+						<button class="avail-btn enabled" id="lab-reset-btn">Reset filter</button>
+					</div>
+
+					<div class="avail-comp">
+						<p class="avail-title">Available Computers: </p>
+						
+						<div class="labs">
+							<div class="lab-row">
+								<p class="lab-name">Lab 1:</p>
+								<p class="lab-avail" data-lab="1"></p>
+							</div>
+							
+							<div class="lab-row">
+								<p class="lab-name">Lab 2:</p>
+								<p class="lab-avail" data-lab="2"></p>
+							</div>
+							
+							<div class="lab-row">
+								<p class="lab-name">Lab 3:</p>
+								<p class="lab-avail" data-lab="3"></p>
+							</div>
+							
+							<div class="lab-row">
+								<p class="lab-name">Lab 4:</p>
+								<p class="lab-avail" data-lab="4"></p>
+							</div>
+							
+							<div class="lab-row">
+								<p class="lab-name">Lab 5:</p>
+								<p class="lab-avail" data-lab="5"></p>
+							</div>
+						</div>
+					</div>
+				</div>
+            </div>
+			
+			<div class="vl"></div>
+			
+            <div class="panel right-panel">
+				<div class="panel-header">
+                    <p class="panel-title">Laboratory Selection</p>
+                </div>
+				
+                <div class="panel-body">
+					<div class="lab l1">
+						<div class="lab-icon-frame">
+							<img src="/images/lab logo.png" class="lab-icon"/>
+						</div>
+						
+						<div class="lab-title">
+							<p><a href="/views/student/s-rc-cs.html?lab=1">Lab 1</a></p>
+						</div>
+						
+						<div class="lab-details">
+							<p>Room Number:<br>GK101</p>
+							<br>
+							<p class="hours">Lab Hours:<br>8:00AM - 8:00PM</p>
+						</div>
+					</div>
+					
+					<div class="lab l2">
+						<div class="lab-icon-frame">
+							<img src="/images/lab logo.png" class="lab-icon"/>
+						</div>
+						
+						<div class="lab-title">
+							<p><a href="/views/student/s-rc-cs.html?lab=2">Lab 2</a></p>
+						</div>
+						
+						<div class="lab-details">
+							<p>Room Number:<br>GK102</p>
+							<br>
+							<p class="hours">Lab Hours:<br>8:00AM - 8:00PM</p>
+						</div>
+					</div>
+					
+					<div class="lab l3">
+						<div class="lab-icon-frame">
+							<img src="/images/lab logo.png" class="lab-icon"/>
+						</div>
+						
+						<div class="lab-title">
+							<p><a href="/views/student/s-rc-cs.html?lab=3">Lab 3</a></p>
+						</div>
+						
+						<div class="lab-details">
+							<p>Room Number:<br>GK103</p>
+							<br>
+							<p class="hours">Lab Hours:<br>8:00AM - 8:00PM</p>
+						</div>
+					</div>
+					
+					<div class="lab l4">
+						<div class="lab-icon-frame">
+							<img src="/images/lab logo.png" class="lab-icon"/>
+						</div>
+						
+						<div class="lab-title">
+							<p><a href="/views/student/s-rc-cs.html?lab=4">Lab 4</a></p>
+						</div>
+						
+						<div class="lab-details">
+							<p>Room Number:<br>GK104</p>
+							<br>
+							<p class="hours">Lab Hours:<br>8:00AM - 8:00PM</p>
+						</div>
+					</div>
+					
+					<div class="lab l5">
+						<div class="lab-icon-frame">
+							<img src="/images/lab logo.png" class="lab-icon"/>
+						</div>
+						
+						<div class="lab-title">
+							<p><a href="/views/student/s-rc-cs.html?lab=5">Lab 5</a></p>
+						</div>
+						
+						<div class="lab-details">
+							<p>Room Number:<br>GK105</p>
+							<br>
+							<p class="hours">Lab Hours:<br>8:00AM - 8:00PM</p>
+						</div>
+					</div>
+				</div>
+            </div>
+			
+        </div>
+    </div>
+	
+	<script src="/js/s-rc.js"></script>
+	
+</body>
+
+</html>
+

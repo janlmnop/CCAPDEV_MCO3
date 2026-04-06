@@ -1,0 +1,235 @@
+@font-face {
+    font-family: 'Nine by Five';
+    src: url('/nine0.ttf'); 
+}
+
+body {
+    font-family: 'Nine by Five';
+    background-image: url("/images/bg.png");
+    background-repeat: no-repeat;
+    background-position: center top;
+    background-size: cover; 
+    margin: 0;
+    min-height: 100vh;
+}
+
+.whole {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start; 
+    position: relative;
+    z-index: 1;
+    width: max(960px, 62.5vw);
+    min-height: max(592px, 38.5416666667vw);
+    margin: 0 auto;
+    padding-top: 20px;
+}
+
+.logo {
+    margin-bottom: -140px;
+    z-index: 3;
+}
+
+.regbox {
+    z-index: 2;
+}
+
+.logo img {
+    width: 700px;
+    height: auto;
+    display: block;
+}
+
+.regbox img {
+    width: 500px; 
+    height: auto;
+    display: block;
+}
+
+.username {
+    position: relative; 
+    margin-top: -537px; 
+    margin-left: 45px; 
+    width: 300px; 
+    z-index: 10;
+}
+
+.username input {
+    width: 100%;
+    padding: 15px 10px;
+    font-size: 23px;
+    background: transparent;
+    border: none; 
+    color: white;
+    font-family: 'Nine by Five', sans-serif;
+    letter-spacing: 2px;
+    outline: none;
+    box-shadow: transparent;
+}
+
+.username input::placeholder {
+    color: rgba(255, 255, 255, 0.623);
+    font-family: 'Nine by Five', sans-serif;
+    letter-spacing: 2px;
+    font-size: 23px;
+}
+
+.username input:focus {
+    border: none; 
+    background: transparent;
+    box-shadow: transparent;
+}
+
+.email {
+    position: relative; 
+    margin-top: 38px; 
+    margin-left: 45px; 
+    width: 300px; 
+    z-index: 10;
+}
+
+.email input {
+    width: 100%;
+    padding: 15px 10px;
+    font-size: 23px;
+    background: transparent;
+    border: none; 
+    color: white;
+    font-family: 'Nine by Five', sans-serif;
+    letter-spacing: 2px;
+    outline: none;
+    box-shadow: transparent;
+}
+
+.email input::placeholder {
+    color: rgba(255, 255, 255, 0.623);
+    font-family: 'Nine by Five', sans-serif;
+    letter-spacing: 2px;
+    font-size: 23px;
+}
+
+.email input:focus {
+    border: none; 
+    background: transparent;
+    box-shadow: transparent;
+}
+
+.password {
+    position: relative; 
+    margin-top: 38px; 
+    margin-left: 45px; 
+    width: 300px; 
+    z-index: 10;
+}
+
+.password input {
+    width: 100%;
+    padding: 15px 10px;
+    font-size: 23px;
+    background: transparent;
+    border: none; 
+    color: white;
+    font-family: 'Nine by Five', sans-serif;
+    letter-spacing: 2px;
+    outline: none;
+    box-shadow: transparent;
+}
+
+.password input::placeholder {
+    color: rgba(255, 255, 255, 0.623);
+    font-family: 'Nine by Five', sans-serif;
+    letter-spacing: 2px;
+    font-size: 23px;
+}
+
+.password input:focus {
+    border: none; 
+    background: transparent;
+    box-shadow: transparent;
+}
+
+.confirm {
+    position: relative; 
+    margin-top: 39px; 
+    margin-left: 45px;
+    width: 300px; 
+    z-index: 10;
+}
+
+.confirm input {
+    width: 100%;
+    padding: 15px 10px;
+    font-size: 23px;
+    background: transparent;
+    border: none; 
+    color: white;
+    font-family: 'Nine by Five', sans-serif;
+    letter-spacing: 2px;
+    outline: none;
+    box-shadow: transparent;
+}
+
+.confirm input::placeholder {
+    color: rgba(255, 255, 255, 0.623);
+    font-family: 'Nine by Five', sans-serif;
+    letter-spacing: 2px;
+    font-size: 23px;
+}
+
+.confirm input:focus {
+    border: none; 
+    background: transparent;
+    box-shadow: transparent;
+}
+
+.login {
+    position: relative;
+    margin-top: 145px;     
+    margin-left: 165px;      
+    width: 300px;        
+    z-index: 9999;
+}
+
+.login a {
+    text-decoration: none;
+    display: block;
+    width: 100%;         
+}
+
+.login h1 {
+    font-family: 'Nine by Five', sans-serif;
+    color: white;
+    font-size: 25px;
+    margin: 0;
+    padding: 0;
+    letter-spacing: 2px;
+    text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+    white-space: nowrap;   
+    width: 100%;          
+}
+.login h1:hover {
+    text-shadow: 0 0 15px rgba(255, 255, 255, 0.8);
+}
+
+
+.join {
+    margin-top: -140px;
+    z-index: 11;
+    display: none;
+    transition: all 0.3s ease;
+}
+
+.join img {
+    display: block;
+    width: 450px; 
+    height: auto;
+    margin-left: 8px;
+    cursor: pointer;
+}
+
+
+
+
+
+

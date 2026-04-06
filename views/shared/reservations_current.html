@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lab World - Current Reservations</title>
+    <link rel="stylesheet" href="/css/reservations.css">
+</head>
+<body>
+
+    <!-- ── SIDE NAVIGATION ── -->
+    <div class="sidenav" id="sidenav">
+        <img src="/images/logo copy.png" alt="Logo" class="nav-logo">
+        <div class="nav-links">
+            <div id="nav-items">
+                <!-- populated by JS based on userType -->
+            </div>
+            <button class="nav-back-btn" onclick="history.back()">&lt; back</button>
+        </div>
+    </div>
+
+    <!-- ── LEFT PANEL ── -->
+    <div class="left-panel">
+        <img src="/images/default.jpeg" alt="User" class="user-picture" id="profile-pic">
+        <div class="user-name" id="user-name">Loading...</div>
+        <div class="user-id" id="user-id"></div>
+        <div class="user-course" id="user-course"></div>
+        <a href="#" id="backBtn" class="back-btn">
+            <img src="/images/back_to_user_profile_logo.png" alt="Back to User Profile">
+        </a>
+    </div>
+
+    <!-- ── MAIN CONTENT ── -->
+    <div class="main-content">
+        <div class="page-title">Reservations</div>
+
+        <div class="tab-container">
+            <img src="/images/tab-ur.png" alt="" class="tab-bg">
+
+            <div class="tab-labels">
+                <div class="tab-label active">Current</div>
+                <div class="tab-label"><a href="/views/shared/reservations_past.html">Past</a></div>
+            </div>
+
+            <div class="tab-inner">
+                <!-- Filter row -->
+                <div class="filter-row">
+                    <div class="filter-dropdown" id="filterDropdown">
+                        <button class="filter-btn" id="filterBtn">
+                            <img src="/images/ascendorderby_logo.png" alt="Filter By">
+                        </button>
+                        <div class="filter-content">
+                            <div class="filter-option">Date</div>
+                            <div class="filter-option">Time</div>
+                            <div class="filter-option">Lab</div>
+                            <div class="filter-option">Computer</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Table -->
+                <div class="table-wrapper">
+                    <table class="reservations-table">
+                        <thead>
+                            <tr>
+                                <th class="select-col">select</th>
+                                <th>Date</th>
+                                <th>Time</th>
+                                <th>Lab</th>
+                                <th>Computer</th>
+                            </tr>
+                        </thead>
+                        <tbody id="reservations-tbody">
+                            <!-- Rows populated dynamically -->
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Pagination below table -->
+                <div class="pagination-btns">
+                    <button class="page-btn" id="prevBtn">
+                        <img src="/images/previous_logo.png" alt="Previous">
+                    </button>
+                    <span class="page-indicator" id="pageIndicator">1 / 1</span>
+                    <button class="page-btn" id="nextBtn">
+                        <img src="/images/next_logo.png" alt="Next">
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = "/api";
+        const userType = localStorage.getItem('userType') || 'student';
+
+        // ── USER ID LOGIC ──
+        const urlParams     = new URLSearchParams(window.location.search);
+        const viewStudent   = urlParams.get('view_student');
+        const loggedInUser  = JSON.parse(localStorage.getItem('user') || '{}');
+        const userId        = viewStudent ? parseInt(viewStudent, 10) : loggedInUser._id;
+        const profileType   = viewStudent ? 'student' : userType;
+
+        // ── BACK BUTTON ──
+        const backBtn = document.getElementById('backBtn');
+        if (viewStudent) {
+            backBtn.href = '/views/labtech/lt-ss.html';
+        } else {
+            backBtn.href = userType === 'labtech'
+                ? '/views/labtech/userprofile_labtech.html'
+                : '/views/student/userprofile_student.html';
+        }
+
+        // carry view_student param to the Past tab link
+        if (viewStudent) {
+            const pastLink = document.querySelector('.tab-label a[href="/views/shared/reservations_past.html"]');
+            if (pastLink) pastLink.href = `reservations_past.html?view_student=${viewStudent}`;
+        }
+
+        // ── LOAD USER INFO ──
+        async function loadUserInfo() {
+            try {
+                const endpoint = profileType === 'labtech'
+                    ? `${API_BASE}/labtech/${userId}`
+                    : `${API_BASE}/students/${userId}`;
+                const res  = await fetch(endpoint);
+                const data = await res.json();
+
+                document.getElementById('user-name').textContent   = data.name;
+                document.getElementById('user-id').textContent     = data._id;
+                document.getElementById('user-course').textContent = profileType === 'labtech'
+                    ? data.job_title
+                    : `${data.college_code} ${data.course_code}`;
+                document.getElementById('profile-pic').src =
+                    `/images/${data.profile_img || 'default.jpeg'}`;
+            } catch (err) {
+                console.error("Failed to load user info:", err);
+            }
+        }
+
+        // ── FORMAT SLOT TIME ──
+        function fmtSlot(s) {
+            let h = parseInt(s.slice(0, 2));
+            const m      = s.slice(2);
+            const period = h >= 12 ? 'PM' : 'AM';
+            if (h > 12) h -= 12;
+            if (h === 0) h = 12;
+            return `${h}:${m}${period}`;
+        }
+
+        // ── LOAD RESERVATIONS ──
+        async function loadReservations() {
+            try {
+                const res   = await fetch(`${API_BASE}/reservations/${userId}`);
+                const all   = await res.json();
+                const today = new Date().toISOString().split('T')[0];
+
+                // Current = today or future AND active
+                const current = all.filter(r => r.date >= today && r.status === 'active');
+
+                const tbody = document.getElementById('reservations-tbody');
+                tbody.innerHTML = '';
+
+                if (current.length === 0) {
+                    tbody.innerHTML = `<tr><td colspan="5" style="text-align:center;color:#9b7fe8;padding:20px;">No current reservations</td></tr>`;
+                } else {
+                    current.forEach(r => {
+                        const slots   = r.slots;
+                        const timeStr = `${fmtSlot(slots[0])}-${fmtSlot(slots[slots.length - 1])}`;
+                        const compNo  = String(r.computer_no).padStart(2, '0');
+
+                        const tr = document.createElement('tr');
+                        tr.innerHTML = `
+                            <td class="checkbox-cell">
+                                <input type="checkbox" class="res-checkbox">
+                            </td>
+                            <td>${r.date}</td>
+                            <td>${timeStr}</td>
+                            <td>${r.lab_name}</td>
+                            <td>${compNo}</td>
+                        `;
+                        tbody.appendChild(tr);
+                    });
+                }
+
+                currentPage = 1;
+                renderPage();
+            } catch (err) {
+                console.error("Failed to load reservations:", err);
+                document.getElementById('reservations-tbody').innerHTML =
+                    `<tr><td colspan="5" style="text-align:center;color:#c87f7f;padding:20px;">Could not load reservations. Is the server running?</td></tr>`;
+            }
+        }
+
+        // ── PAGINATION ──
+        const ROWS_PER_PAGE = 3;
+        let currentPage = 1;
+
+        function getRows() {
+            return Array.from(document.querySelectorAll('.reservations-table tbody tr'));
+        }
+
+        function renderPage() {
+            const allRows    = getRows();
+            const totalPages = Math.max(1, Math.ceil(allRows.length / ROWS_PER_PAGE));
+            if (currentPage > totalPages) currentPage = totalPages;
+            const start = (currentPage - 1) * ROWS_PER_PAGE;
+            const end   = start + ROWS_PER_PAGE;
+
+            allRows.forEach((row, i) => {
+                row.style.display = (i >= start && i < end) ? '' : 'none';
+            });
+
+            document.getElementById('pageIndicator').textContent = `${currentPage} / ${totalPages}`;
+            document.getElementById('prevBtn').disabled = currentPage === 1;
+            document.getElementById('nextBtn').disabled = currentPage === totalPages;
+        }
+
+        document.getElementById('prevBtn').addEventListener('click', () => {
+            if (currentPage > 1) { currentPage--; renderPage(); }
+        });
+        document.getElementById('nextBtn').addEventListener('click', () => {
+            const total = Math.ceil(getRows().length / ROWS_PER_PAGE);
+            if (currentPage < total) { currentPage++; renderPage(); }
+        });
+
+        // ── FILTER DROPDOWN ──
+        const filterDropdown = document.getElementById('filterDropdown');
+        const filterBtn      = document.getElementById('filterBtn');
+
+        filterBtn.addEventListener('click', (e) => {
+            e.preventDefault(); e.stopPropagation();
+            filterDropdown.classList.toggle('active');
+        });
+        document.addEventListener('click', (e) => {
+            if (!filterDropdown.contains(e.target)) filterDropdown.classList.remove('active');
+        });
+
+        // ── SORTING ──
+        function getColIndex(opt) {
+            return { 'Date': 1, 'Time': 2, 'Lab': 3, 'Computer': 4 }[opt];
+        }
+        function parseDate(s) { return new Date(s.trim()); }
+        function parseTime(s) {
+            const st = s.split('-')[0].trim();
+            const m  = st.match(/(\d+):(\d+)(AM|PM)/i);
+            if (!m) return 0;
+            let h = parseInt(m[1]);
+            const mins = parseInt(m[2]);
+            const per  = m[3].toUpperCase();
+            if (per === 'PM' && h !== 12) h += 12;
+            if (per === 'AM' && h === 12) h = 0;
+            return h * 60 + mins;
+        }
+        function parseLab(s) {
+            s = s.trim();
+            const m = s.match(/^([A-Za-z]+)(\d+)([A-Za-z]*)$/);
+            return m ? m[1] + m[2].padStart(6, '0') + m[3] : s;
+        }
+        function parseCpu(s) { return parseInt(s.trim(), 10) || 0; }
+
+        function sortTable(col) {
+            const tbody = document.querySelector('.reservations-table tbody');
+            const rows  = Array.from(tbody.querySelectorAll('tr'));
+            const idx   = getColIndex(col);
+            rows.sort((a, b) => {
+                const at = a.cells[idx] ? a.cells[idx].textContent.trim() : '';
+                const bt = b.cells[idx] ? b.cells[idx].textContent.trim() : '';
+                if (col === 'Date')     return parseDate(at) - parseDate(bt);
+                if (col === 'Time')     return parseTime(at) - parseTime(bt);
+                if (col === 'Lab')      return parseLab(at).localeCompare(parseLab(bt));
+                if (col === 'Computer') return parseCpu(at) - parseCpu(bt);
+                return 0;
+            });
+            rows.forEach(r => tbody.appendChild(r));
+            currentPage = 1;
+            renderPage();
+        }
+
+        document.querySelectorAll('.filter-option').forEach(opt => {
+            opt.addEventListener('click', function () {
+                sortTable(this.textContent.trim());
+                filterDropdown.classList.remove('active');
+            });
+        });
+
+        // ── SIDENAV ──
+        (function buildNav() {
+            const uType    = localStorage.getItem('userType') || 'student';
+            const navItems = document.getElementById('nav-items');
+
+            const studentLinks = [
+                { label: 'Home',              href: '/views/student/mainmenu_student.html' },
+                { label: 'Reserve Computer',  href: '/views/student/s-rc-ls.html' },
+                { label: 'Student Search',    href: '/views/student/s-ss.html' },
+                { label: 'View User Profile', href: '/views/student/userprofile_student.html' },
+                { label: 'View Reservations', href: '#', active: true }
+            ];
+
+            const labtechLinks = [
+                { label: 'Home',                href: '/views/labtech/mainmenu_labtech.html' },
+                { label: 'Manage Reservations', href: '/views/labtech/lt-rc-ls.html' },
+                { label: 'View Reservations',   href: '/views/labtech/lt-vr-ls.html' },
+                { label: 'Student Search',      href: '/views/labtech/lt-ss.html' },
+                { label: 'View User Profile',   href: '/views/labtech/userprofile_labtech.html' },
+                { label: viewStudent ? 'Viewing Student' : 'My Reservations', href: '#', active: true }
+            ];
+
+            const links = uType === 'labtech' ? labtechLinks : studentLinks;
+            links.forEach(function(link) {
+                const a = document.createElement('a');
+                a.href = link.href;
+                a.textContent = link.label;
+                if (link.active) a.classList.add('active-link');
+                navItems.appendChild(a);
+            });
+        })();
+
+        // ── INIT ──
+        window.addEventListener('load', async () => {
+            await loadUserInfo();
+            await loadReservations();
+        });
+    </script>
+</body>
+</html>

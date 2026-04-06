@@ -1,0 +1,9 @@
+[{
+  "_id": 1,
+  "name": "Jane Doe",
+  "email_add": "jane.doe@dlsu.edu.ph",
+  "job_title": "Lab Technician",
+  "bio": "I love my job :)",
+  "password": "$2b$10$QfCwfXdf.e9FC.JPOgDQ9OlX2tshXOqUmZSksHWwd/q/shmesYLXy",
+  "profile_img": "Jane.jpg"
+}]

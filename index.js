@@ -75,6 +75,25 @@ function timesOverlap(aStart, aEnd, bStart, bEnd) {
     return aStart < bEnd && bStart < aEnd;
 }
 
+// ── DERIVE NAME FROM EMAIL ──
+// Converts firstname_middlenames_lastname@dlsu.edu.ph -> "Firstname Middlenames Lastname"
+// e.g. jay_reyes@dlsu.edu.ph        -> "Jay Reyes"
+//      jay_jackson_reyes@dlsu.edu.ph -> "Jay Jackson Reyes"
+function deriveNameFromEmail(email) {
+    if (!email || typeof email !== 'string') return '';
+
+    const trimmed = email.trim().toLowerCase();
+    if (!trimmed.endsWith('@dlsu.edu.ph')) return '';
+
+    const localPart = trimmed.split('@')[0];
+    const parts = localPart.split('_').filter(function (p) { return p.length > 0; });
+    if (parts.length === 0) return '';
+
+    return parts.map(function (word) {
+        return word.charAt(0).toUpperCase() + word.slice(1);
+    }).join(' ');
+}
+
 // paths
 const path = require('path');
 
@@ -159,7 +178,7 @@ app.post("/api/auth/login", async (req, res) => {
 // POST /api/auth/register/student
 app.post("/api/auth/register/student", async (req, res) => {
     console.log("Register body received:", req.body);
-    const { studentId, email, password, confirmPassword } = req.body;
+    const { studentId, email, password, confirmPassword, name } = req.body;
 
     if (!studentId || !email || !password || !confirmPassword)
         return res.status(400).json({ message: "All fields are required." });
@@ -179,9 +198,15 @@ app.post("/api/auth/register/student", async (req, res) => {
         const salt = await bcrypt.genSalt(SALT_WORK_FACTOR);
         const hashedPassword = await bcrypt.hash(password, salt);
 
+        // Use the name sent from the client if provided; otherwise derive it server-side
+        // from the email as a fallback so the feature works even if called via API directly.
+        const resolvedName = (name && name.trim() !== '')
+            ? name.trim()
+            : deriveNameFromEmail(email);
+
         const student = new Student({
             _id:          Number(studentId),
-            name:         "",
+            name:         resolvedName,
             email_add:    email,
             college_code: "",
             course_code:  "",

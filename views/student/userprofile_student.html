@@ -8,6 +8,70 @@
     <head>
         <title>User Profile (Student)</title>
         <link rel="stylesheet" href="/css/user-profiles.css">
+        <style>
+            /* ── DELETE CONFIRMATION POPUP OVERRIDE ── */
+            .up-popup-box-delete h2 {
+                color: #c86262;
+                margin-bottom: 8px;
+            }
+
+            .up-popup-box-delete .delete-warning {
+                font-size: 18px;
+                margin-bottom: 10px;
+                color: #333;
+                line-height: 1.6;
+            }
+
+            .up-popup-box-delete .delete-consequences {
+                font-size: 15px;
+                color: #666;
+                background: rgba(200, 98, 98, 0.1);
+                border-left: 4px solid #c86262;
+                padding: 10px 14px;
+                margin-bottom: 18px;
+                line-height: 1.8;
+            }
+
+            .up-popup-box-delete .delete-confirm-label {
+                font-size: 16px;
+                margin-bottom: 8px;
+                color: #333;
+            }
+
+            .up-popup-box-delete .delete-type-input {
+                width: 100%;
+                box-sizing: border-box;
+                padding: 8px 12px;
+                font-size: 16px;
+                border: 2px solid #c86262;
+                border-radius: 6px;
+                margin-bottom: 18px;
+                font-family: 'Nine by Five', sans-serif;
+                background: #fff;
+                color: #333;
+            }
+
+            .up-popup-box-delete .delete-type-input:focus {
+                outline: none;
+                border-color: #a04040;
+            }
+
+            .submitbtn-delete {
+                background-color: #e4aeae !important;
+                border-color: #c86262 !important;
+                color: #7a1010;
+                transition: background-color 0.2s ease;
+            }
+
+            .submitbtn-delete:hover:not(:disabled) {
+                background-color: #d48888 !important;
+            }
+
+            .submitbtn-delete:disabled {
+                opacity: 0.5;
+                cursor: not-allowed;
+            }
+        </style>
     </head>
 
     <body>
@@ -117,19 +181,64 @@
                 </div>
             </div>
 
-            <!-- Delete Account Popup -->
+            <!-- Delete Account Popup — requires typing "DELETE" to confirm -->
             <div class="up-popup-container-delete">
                 <div class="up-popup-box-delete">
                     <h2>Delete Account</h2>
-                    <p>Would you like to delete your account?</p>
+
+                    <p class="delete-warning">Are you sure you want to permanently delete your account?</p>
+
+                    <div class="delete-consequences">
+                        ⚠ This action <strong>cannot be undone</strong>. Deleting your account will:<br>
+                        &bull; Permanently remove your profile and all personal details<br>
+                        &bull; Cancel and delete <strong>all your reservations</strong> (current and past)<br>
+                        &bull; Remove you from student search results<br>
+                        &bull; Prevent lab technicians from creating reservations for you
+                    </div>
+
+                    <p class="delete-confirm-label">Type <strong>DELETE</strong> to confirm:</p>
+                    <input
+                        type="text"
+                        id="delete-confirm-input"
+                        class="delete-type-input"
+                        placeholder="Type DELETE here"
+                        autocomplete="off"
+                    />
+
                     <div class="up-popup-buttons-delete">
-                        <button class="backbtn-delete">No. Take me back!</button>
-                        <button class="submitbtn-delete">Yes, delete my account!</button>
+                        <button class="backbtn-delete">No, take me back!</button>
+                        <button class="submitbtn-delete" id="submitbtn-delete-id" disabled>
+                            Yes, delete my account!
+                        </button>
                     </div>
                 </div>
             </div>
         </div>
 
         <script src="/js/script_student.js"></script>
+
+        <script>
+            // ── Enable/disable delete button based on typed confirmation ──
+            const deleteInput   = document.getElementById('delete-confirm-input');
+            const deleteSubmit  = document.getElementById('submitbtn-delete-id');
+            const containerDel  = document.querySelector('.up-popup-container-delete');
+            const backDeleteBtn = document.querySelector('.backbtn-delete');
+
+            deleteInput.addEventListener('input', function () {
+                deleteSubmit.disabled = this.value.trim() !== 'DELETE';
+            });
+
+            // Reset input field whenever the popup is opened
+            document.querySelector('.up-deletebtn').addEventListener('click', function () {
+                deleteInput.value = '';
+                deleteSubmit.disabled = true;
+            });
+
+            // Reset input field when "back" is clicked
+            backDeleteBtn.addEventListener('click', function () {
+                deleteInput.value = '';
+                deleteSubmit.disabled = true;
+            });
+        </script>
     </body>
 </html>

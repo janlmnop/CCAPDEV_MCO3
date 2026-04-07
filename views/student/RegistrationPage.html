@@ -70,7 +70,7 @@
 
                     const userFilled    = usernameInput.value.trim() !== '';
                     const emailFilled   = emailInput.value.trim() !== '';
-                    const validEmail    = emailInput.value.includes('@') && emailInput.value.includes('.');
+                    const validEmail = email.value.endsWith('@dlsu.edu.ph');
                     const passFilled    = passwordInput.value !== '';
                     const confirmFilled = confirmInput.value !== '';
                     const passMatch     = passwordInput.value === confirmInput.value;

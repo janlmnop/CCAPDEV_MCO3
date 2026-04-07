@@ -39,7 +39,7 @@
                 </a>
             </div>
 
-            <div class="join" id="joinButton">
+            <div class="register" id="joinButton">
                 <img src="/images/joinbutton.png" alt="Create Account">
             </div>
         </div>
@@ -77,7 +77,7 @@
 
                     const isIdFilled      = employeeId.value.trim() !== '';
                     const isEmailFilled   = email.value.trim() !== '';
-                    const isValidEmail    = email.value.endsWith('@dlsu.edu.ph');
+                    const isValidEmail    = email.value.includes('@') && email.value.includes('.');
                     const isPasswordFilled = password.value !== '';
                     const isConfirmFilled = confirmPassword.value !== '';
                     const doPasswordsMatch = password.value === confirmPassword.value;

@@ -63,6 +63,7 @@
                                 <th>Time</th>
                                 <th>Lab</th>
                                 <th>Computer</th>
+                                <th>Request Date and Time</th>
                             </tr>
                         </thead>
                         <tbody id="reservations-tbody"></tbody>
@@ -118,6 +119,26 @@
             }
         }
 
+        function fmtRequestDateTime(s) {
+            const dt = new Date(s);
+        
+            const y = dt.getFullYear();
+            const mon = String(dt.getMonth() + 1).padStart(2, '0');
+            const d = String(dt.getDate()).padStart(2, '0');
+        
+            let h = dt.getHours();
+            const min = String(dt.getMinutes()).padStart(2, '0');
+            const period = h >= 12 ? 'PM' : 'AM';
+        
+            if (h > 12) h -= 12;
+            if (h === 0) h = 12;
+        
+            return {
+                date: `${y}-${mon}-${d}`,
+                time: `${h}:${min}${period}`
+            };
+        }
+
         // ── FORMAT TIME ──
         function fmtSlot(s) {
             let h = parseInt(s.slice(0, 2));
@@ -141,11 +162,12 @@
                 tbody.innerHTML = '';
 
                 if (past.length === 0) {
-                    tbody.innerHTML = `<tr><td colspan="4" style="text-align:center;color:#9b7fe8;padding:20px;">No past reservations</td></tr>`;
+                    tbody.innerHTML = `<tr><td colspan="5" style="text-align:center;color:#9b7fe8;padding:20px;">No past reservations</td></tr>`;
                 } else {
                     past.forEach(r => {
                         const timeStr = `${fmtSlot(r.start_time)}-${fmtSlot(r.end_time)}`;
                         const compNo  = String(r.computer_no).padStart(2, '0');
+                        const requestDateTime = fmtRequestDateTime(r.updated_at);
 
                         const tr = document.createElement('tr');
 
@@ -154,6 +176,7 @@
                             <td>${timeStr}</td>
                             <td>${r.lab_name}</td>
                             <td>${compNo}</td>
+                            <td>${requestDateTime.date}<br>${requestDateTime.time}</td>
                         `;
 
                         tbody.appendChild(tr);
@@ -165,7 +188,7 @@
             } catch (err) {
                 console.error("Failed to load reservations:", err);
                 document.getElementById('reservations-tbody').innerHTML =
-                    `<tr><td colspan="4" style="text-align:center;color:#c87f7f;padding:20px;">Could not load reservations. Is the server running?</td></tr>`;
+                    `<tr><td colspan="5" style="text-align:center;color:#c87f7f;padding:20px;">Could not load reservations. Is the server running?</td></tr>`;
             }
         }
 
@@ -210,7 +233,7 @@
 
         // ── SORTING ──
         function getColIndex(opt) {
-            return { 'Date': 0, 'Time': 1, 'Lab': 2, 'Computer': 3 }[opt];
+            return { 'Date': 0, 'Time': 1, 'Lab': 2, 'Computer': 3, 'Request Date and Time': 4 }[opt];
         }
         function parseDate(s) { return new Date(s.trim()); }
         function parseTime(s) {
@@ -258,22 +281,19 @@
 
         // ── SIDENAV ──
         (function buildNav() {
-            const uType    = localStorage.getItem('userType') || 'student';
+            const uType    = localStorage.getItem('userType') || sessionStorage.getItem('userType') || 'student';
             const navItems = document.getElementById('nav-items');
             const studentLinks = [
                 { label: 'Home',              href: '/views/student/mainmenu_student.html' },
                 { label: 'Reserve Computer',  href: '/views/student/s-rc-ls.html' },
                 { label: 'Student Search',    href: '/views/student/s-ss.html' },
-                { label: 'View User Profile', href: '/views/student/userprofile_student.html' },
-                { label: 'View Reservations', href: '#', active: true }
+                { label: 'View User Profile', href: '/views/student/userprofile_student.html' }
             ];
             const labtechLinks = [
                 { label: 'Home',                href: '/views/labtech/mainmenu_labtech.html' },
-                { label: 'Manage Reservations', href: '/views/labtech/lt-rc-ls.html' },
                 { label: 'View Reservations',   href: '/views/labtech/lt-vr-ls.html' },
                 { label: 'Student Search',      href: '/views/labtech/lt-ss.html' },
-                { label: 'View User Profile',   href: '/views/labtech/userprofile_labtech.html' },
-                { label: viewStudent ? 'Viewing Student' : 'My Reservations', href: '#', active: true }
+                { label: 'View User Profile',   href: '/views/labtech/userprofile_labtech.html' }
             ];
             const links = uType === 'labtech' ? labtechLinks : studentLinks;
             links.forEach(function (link) {

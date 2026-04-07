@@ -183,6 +183,23 @@ function getComputerId() {
     return ((selectedLab - 1) * 10) + selectedComp;
 }
 
+function getReservationId() {
+    const params = new URLSearchParams(window.location.search);
+    return params.get("reservation_id") || "";
+}
+
+function updateEditDateDisplay(dateValue) {
+    const dateEdit = document.getElementById("date-edit");
+    if (!dateEdit) return;
+
+    if (!dateValue) {
+        dateEdit.textContent = "";
+        return;
+    }
+
+    dateEdit.textContent = formatDateLabel(getSelectedDate(dateValue));
+}
+
 /* ── lab/comp URL param handling ── */
 
 document.addEventListener("DOMContentLoaded", function () {
@@ -224,6 +241,22 @@ document.addEventListener("DOMContentLoaded", function () {
             compLabel.textContent = `Comp ${selectedComp}`;
         }
     }
+
+    if (currentPage === "s-rc-cs-ce.html") {
+        if (!selectedComp) return;
+    
+        document.title = `Edit Reservation - L${selectedLab}C${selectedComp}`;
+    
+        const panelTitle = document.getElementById("res-panel-title");
+        if (panelTitle) {
+            panelTitle.textContent = `Lab ${selectedLab} Computer ${selectedComp} Reservation`;
+        }
+    
+        const compLabel = document.getElementById("comp-title");
+        if (compLabel) {
+            compLabel.textContent = `Comp ${selectedComp}`;
+        }
+    }
 });
 
 /* ── schedule paging ── */
@@ -233,11 +266,20 @@ const schedRows = document.querySelectorAll(".sched-table .res-row");
 const prevBtn = document.getElementById("prev");
 const nextBtn = document.getElementById("next");
 
+const currentPageName = window.location.pathname.split("/").pop();
+const isReservePage = currentPageName === "s-rc-cs-c.html";
+const isEditReservationPage = currentPageName === "s-rc-cs-ce.html";
+
 const slotsPerPage = 6;
+
 let currentSchedulePage = 0;
 let currentScheduleDate = "";
 let selectedScheduleSlots = {};
 let reservedScheduleSlots = {};
+let selectedReservationId = "";
+let selectedReservationInfo = null;
+let originalReservationInfo = null;
+let originalReservationSlotIndexes = [];
 
 function generateScheduleSlots() {
     const slots = [];
@@ -433,6 +475,81 @@ function getReservationSlotIndexes(startTime, endTime) {
     return indexes;
 }
 
+function arraysHaveCommonSlot(first, second) {
+    return first.some(function (value) {
+        return second.includes(value);
+    });
+}
+
+function canEditSelection(dateValue, slotIndexes) {
+    if (!isEditReservationPage) return true;
+    if (!originalReservationInfo || !dateValue) return false;
+    if (dateValue !== originalReservationInfo.date) return false;
+    if (!slotIndexes.length) return false;
+
+    const sorted = [...slotIndexes].sort(function (a, b) {
+        return a - b;
+    });
+
+    if (!isContinuousSelection(sorted)) {
+        return false;
+    }
+
+    if (!arraysHaveCommonSlot(sorted, originalReservationSlotIndexes)) {
+        return false;
+    }
+
+    for (const slotIndex of sorted) {
+        const reservedInfo = getReservedSlotInfo(dateValue, slotIndex);
+
+        if (
+            reservedInfo &&
+            (!originalReservationInfo._id || reservedInfo.reservation._id !== originalReservationInfo._id)
+        ) {
+            return false;
+        }
+    }
+
+    return true;
+}
+
+async function loadOriginalReservationForEdit() {
+    const reservationId = getReservationId();
+
+    if (!isEditReservationPage || !reservationId) {
+        return;
+    }
+
+    const response = await fetch(`${API_BASE}/reservation/${reservationId}`);
+
+    if (!response.ok) {
+        throw new Error("Failed to load reservation to edit");
+    }
+
+    const reservation = await response.json();
+
+    if (!reservation || reservation.status !== "active") {
+        throw new Error("Selected reservation is not editable");
+    }
+
+    const currentStudentId = String(getCurrentStudentId() || "");
+    const reservationOwnerId = String(reservation.user_id || "");
+
+    if (!currentStudentId || !reservationOwnerId || reservationOwnerId !== currentStudentId) {
+        throw new Error("You are not allowed to edit this reservation");
+    }
+
+    originalReservationInfo = reservation;
+    selectedReservationId = reservation._id;
+    selectedReservationInfo = reservation;
+    currentScheduleDate = reservation.date;
+    originalReservationSlotIndexes = getReservationSlotIndexes(
+        reservation.start_time,
+        reservation.end_time
+    );
+    selectedScheduleSlots[reservation.date] = [...originalReservationSlotIndexes];
+}
+
 async function fetchComputerReservations(dateValue) {
     const selectedLab = getSelectedLab();
     const actualComputerId = getComputerId();
@@ -526,6 +643,26 @@ function fillSchedulePage() {
             slotCell.innerHTML = "";
         }
 
+        if (isEditReservationPage) {
+            const isOriginalReservationSlot =
+                reservedInfo &&
+                originalReservationInfo &&
+                reservedInfo.reservation &&
+                reservedInfo.reservation._id === originalReservationInfo._id;
+        
+            checkbox.checked = selectedIndexes.includes(slotIndex);
+        
+            if (isPastScheduleSlot(currentScheduleDate, slotIndex) && !isOriginalReservationSlot) {
+                checkbox.disabled = true;
+            } else if (reservedInfo && !isOriginalReservationSlot) {
+                checkbox.disabled = true;
+            } else {
+                checkbox.disabled = false;
+            }
+        
+            return;
+        }
+        
         if (isPastScheduleSlot(currentScheduleDate, slotIndex) || reservedInfo) {
             checkbox.checked = false;
             checkbox.disabled = true;
@@ -591,6 +728,14 @@ async function loadScheduleForDate(selectedDate) {
     currentScheduleDate = selectedDate;
     currentSchedulePage = 0;
     selectedScheduleSlots = {};
+    selectedReservationId = "";
+    selectedReservationInfo = null;
+
+    if (isEditReservationPage && originalReservationInfo) {
+        selectedReservationId = originalReservationInfo._id;
+        selectedReservationInfo = originalReservationInfo;
+        selectedScheduleSlots[selectedDate] = [...originalReservationSlotIndexes];
+    }
 
     if (!selectedDate) {
         clearScheduleTable();
@@ -604,16 +749,102 @@ async function loadScheduleForDate(selectedDate) {
 }
 
 if (schedDateSelect) {
-    schedDateSelect.addEventListener("change", function () {
-        loadScheduleForDate(this.value);
+    schedDateSelect.addEventListener("change", async function () {
+        await loadScheduleForDate(this.value);
     });
 }
 
+document.addEventListener("DOMContentLoaded", async function () {
+    try {
+        if (isEditReservationPage) {
+            await loadOriginalReservationForEdit();
+
+            if (originalReservationInfo) {
+                updateEditDateDisplay(originalReservationInfo.date);
+
+                if (anonCheck) {
+                    anonCheck.checked = originalReservationInfo.is_anonymous === true;
+                }
+
+                await loadScheduleForDate(originalReservationInfo.date);
+                selectedScheduleSlots[originalReservationInfo.date] = [...originalReservationSlotIndexes];
+                fillSchedulePage();
+                updateConfirmDetails();
+                return;
+            }
+        }
+
+        if (!schedDateSelect) return;
+
+        if (!schedDateSelect.value && schedDateSelect.options.length > 1) {
+            schedDateSelect.selectedIndex = 1;
+        }
+
+        if (schedDateSelect.value) {
+            await loadScheduleForDate(schedDateSelect.value);
+        }
+    } catch (error) {
+        console.error(error);
+        alert(error.message || "Could not load reservation.");
+    }
+});
+
 schedRows.forEach(function (row) {
     const checkbox = row.querySelector(".res-check");
+    if (!checkbox) return;
 
     checkbox.addEventListener("change", function () {
+        if (!currentScheduleDate) {
+            this.checked = false;
+            return;
+        }
+
         const slotIndex = parseInt(this.getAttribute("data-slot-index"), 10);
+        const reservedInfo = getReservedSlotInfo(currentScheduleDate, slotIndex);
+
+        if (isEditReservationPage) {
+            const isOriginalReservationSlot =
+                reservedInfo &&
+                originalReservationInfo &&
+                reservedInfo.reservation &&
+                reservedInfo.reservation._id === originalReservationInfo._id;
+
+            if (isPastScheduleSlot(currentScheduleDate, slotIndex) && !isOriginalReservationSlot) {
+                this.checked = false;
+                return;
+            }
+
+            if (reservedInfo && !isOriginalReservationSlot) {
+                this.checked = false;
+                return;
+            }
+
+            let selectedIndexes = [...getSelectedSlotsForDate(currentScheduleDate)];
+
+            if (this.checked) {
+                if (!selectedIndexes.includes(slotIndex)) {
+                    selectedIndexes.push(slotIndex);
+                }
+            } else {
+                selectedIndexes = selectedIndexes.filter(function (index) {
+                    return index !== slotIndex;
+                });
+            }
+
+            selectedIndexes.sort(function (a, b) {
+                return a - b;
+            });
+
+            if (!canEditSelection(currentScheduleDate, selectedIndexes)) {
+                this.checked = !this.checked;
+                return;
+            }
+
+            selectedScheduleSlots[currentScheduleDate] = selectedIndexes;
+            fillSchedulePage();
+            return;
+        }
+
         const success = handleSlotSelection(slotIndex, this.checked);
 
         if (!success) {
@@ -848,6 +1079,7 @@ if (compResetBtn) {
 
 const confirmBtn = document.getElementById("confirm-btn");
 const confirmPopup = document.getElementById("confirm-popup");
+const returnBtn = document.getElementById("return-btn");
 const yesBtn = document.getElementById("yes-btn");
 const noBtn = document.getElementById("no-btn");
 const anonCheck = document.getElementById("anon-check");
@@ -904,7 +1136,18 @@ function fillConfirmPopup() {
     }
 
     if (popupContent[5]) {
-        popupContent[5].textContent = `Set under: ${getOwnerLabel()}`;
+        if (isEditReservationPage && originalReservationInfo) {
+            const ownerText =
+                originalReservationInfo.name ||
+                originalReservationInfo.reserved_by ||
+                getCurrentStudentName() ||
+                "Unknown";
+
+            popupContent[5].textContent =
+                `Set under: ${ownerText}${anonCheck && anonCheck.checked ? " (Anonymous)" : ""}`;
+        } else {
+            popupContent[5].textContent = `Set under: ${getOwnerLabel()}`;
+        }
     }
 }
 
@@ -930,7 +1173,7 @@ function closeConfirmPopup() {
     confirmPopup.style.display = "none";
 }
 
-async function saveReservation() {
+async function createReservation() {
     const currentStudentId = getCurrentStudentId();
     const selectedLab = getSelectedLab();
     const selectedComp = getComputerId();
@@ -982,9 +1225,93 @@ async function saveReservation() {
     }
 }
 
+async function updateReservation() {
+    const startTime = getReservationStartTime();
+    const endTime = getReservationEndTime();
+
+    if (!originalReservationInfo || !selectedReservationId || !startTime || !endTime) {
+        alert("Missing edited reservation details.");
+        return false;
+    }
+
+    const currentStudentId = String(getCurrentStudentId() || "");
+    const reservationOwnerId = String(originalReservationInfo.user_id || "");
+
+    if (!currentStudentId || !reservationOwnerId || reservationOwnerId !== currentStudentId) {
+        alert("You are not allowed to edit this reservation.");
+        return false;
+    }
+
+    const selectedIndexes = getSelectedSlotsForDate(currentScheduleDate);
+
+    if (!canEditSelection(currentScheduleDate, selectedIndexes)) {
+        alert("Edited reservation must stay on the same date, remain adjacent, and still include at least one original time slot.");
+        return false;
+    }
+
+    try {
+        const response = await fetch(`${API_BASE}/reservation/${selectedReservationId}`, {
+            method: "PUT",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                start_time: startTime,
+                end_time: endTime,
+                is_anonymous: anonCheck ? anonCheck.checked : false
+            })
+        });
+
+        const result = await response.json();
+
+        if (!response.ok) {
+            throw new Error(result.message || "Failed to update reservation");
+        }
+
+        alert("Reservation updated successfully.");
+        closeConfirmPopup();
+
+        if (document.referrer) {
+            window.history.back();
+        } else {
+            window.location.href = "/views/shared/reservations_current.html";
+        }
+
+        return true;
+    } catch (error) {
+        console.error("Error updating reservation:", error);
+        alert(error.message || "Failed to update reservation.");
+        return false;
+    }
+}
+
 if (confirmBtn) {
     confirmBtn.addEventListener("click", function () {
+        if (isEditReservationPage) {
+            if (!originalReservationInfo) {
+                alert("No reservation selected for editing.");
+                return;
+            }
+
+            const selectedIndexes = getSelectedSlotsForDate(currentScheduleDate);
+
+            if (!canEditSelection(currentScheduleDate, selectedIndexes)) {
+                alert("Edited reservation must include at least one original time slot.");
+                return;
+            }
+        }
+
         openConfirmPopup();
+    });
+}
+
+if (returnBtn) {
+    returnBtn.addEventListener("click", function () {
+        if (document.referrer) {
+            window.history.back();
+        } else {
+            window.location.href = "/views/shared/reservations_current.html";
+        }
     });
 }
 
@@ -1005,7 +1332,13 @@ if (noBtn) {
 if (yesBtn) {
     yesBtn.addEventListener("click", async function () {
         yesBtn.disabled = true;
-        await saveReservation();
+
+        if (isEditReservationPage) {
+            await updateReservation();
+        } else {
+            await createReservation();
+        }
+
         yesBtn.disabled = false;
     });
 }

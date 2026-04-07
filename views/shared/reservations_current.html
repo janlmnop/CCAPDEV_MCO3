@@ -169,6 +169,7 @@
                                 <th>Time</th>
                                 <th>Lab</th>
                                 <th>Computer</th>
+                                <th>Request Date and Time</th>
                             </tr>
                         </thead>
                         <tbody id="reservations-tbody"></tbody>
@@ -257,15 +258,88 @@
             return `${h}:${m}${period}`;
         }
 
+        function fmtRequestDateTime(s) {
+            const dt = new Date(s);
+        
+            const y = dt.getFullYear();
+            const mon = String(dt.getMonth() + 1).padStart(2, '0');
+            const d = String(dt.getDate()).padStart(2, '0');
+        
+            let h = dt.getHours();
+            const min = String(dt.getMinutes()).padStart(2, '0');
+            const period = h >= 12 ? 'PM' : 'AM';
+        
+            if (h > 12) h -= 12;
+            if (h === 0) h = 12;
+        
+            return {
+                date: `${y}-${mon}-${d}`,
+                time: `${h}:${min}${period}`
+            };
+        }
+
+        // ── LAB TECH DELETE HELPERS ──
+        function getCurrentDate() {
+            const now = new Date();
+            const year = now.getFullYear();
+            const month = String(now.getMonth() + 1).padStart(2, '0');
+            const day = String(now.getDate()).padStart(2, '0');
+            return `${year}-${month}-${day}`;
+        }
+        
+        function getCurrentTime() {
+            const now = new Date();
+            const hours = String(now.getHours()).padStart(2, '0');
+            const minutes = String(now.getMinutes()).padStart(2, '0');
+            return parseInt(`${hours}${minutes}`, 10);
+        }
+        
+        function canDelete(reservation) {
+            const today = getCurrentDate();
+            const curTime = getCurrentTime();
+        
+            if (reservation.date !== today) {
+                return true;
+            }
+        
+            const startTime = parseInt(reservation.start_time, 10);
+            const deleteTime = startTime + 10;
+        
+            if (curTime >= startTime && curTime < deleteTime) {
+                return false;
+            }
+        
+            return true;
+        }
+
         // ── SELECTED RESERVATIONS ──
         let selectedReservations = [];
         const editBtn   = document.getElementById('editBtn');
         const deleteBtn = document.getElementById('deleteBtn');
 
         function updateActionBtns() {
-            const disabled = selectedReservations.length === 0;
-            editBtn.disabled   = disabled;
-            deleteBtn.disabled = disabled;
+            const hasSelection = selectedReservations.length > 0;
+            let canManage = hasSelection;
+            let hideButtons = false;
+
+            // if student, check if user owns the reservations to enable edit/delete
+            if (hasSelection && userType === 'student') {
+                const isOwner = selectedReservations.every(r => String(r.owner_id) === String(loggedInUser._id));
+
+                canManage = isOwner;
+                hideButtons = !isOwner;
+            }
+        
+            editBtn.disabled = !canManage;
+            deleteBtn.disabled = !canManage;
+
+            if (hideButtons) {
+                editBtn.style.display = "none";
+                deleteBtn.style.display = "none";
+            } else {
+                editBtn.style.display = "";
+                deleteBtn.style.display = "";
+            }
         }
 
         // ── DELETE POPUP ──
@@ -307,11 +381,31 @@
             }
             const r = selectedReservations[0];
             // navigate to the lab-tech edit page with the reservation id
-            window.location.href = `/views/labtech/lt-vr-cs-ce.html?lab=${r.lab_id}&comp=${r.comp_no}&reservation_id=${r.id}`;
+            if (userType === "labtech") {
+                window.location.href = `/views/labtech/lt-vr-cs-ce.html?lab=${r.lab_id}&comp=${r.comp_no}&reservation_id=${r.id}`;
+            } else if (userType === "student") {
+                if (String(loggedInUser._id) !== String(r.owner_id)) {
+                    return;
+                }
+
+                window.location.href = `/views/student/s-rc-cs-ce.html?lab=${r.lab_id}&comp=${r.comp_no}&reservation_id=${r.id}`;
+            }
         });
 
         deleteBtn.addEventListener('click', function () {
             if (selectedReservations.length === 0) return;
+        
+            if (userType === "labtech") {
+                const cannotDelete = selectedReservations.some(function (r) {
+                    return !canDelete(r);
+                });
+        
+                if (cannotDelete) {
+                    alert("Ongoing reservations can only be deleted within 10 minutes of the current time slot.");
+                    return;
+                }
+            }
+        
             openDeletePopup();
         });
 
@@ -331,20 +425,24 @@
                 tbody.innerHTML = '';
 
                 if (current.length === 0) {
-                    tbody.innerHTML = `<tr><td colspan="5" style="text-align:center;color:#9b7fe8;padding:20px;">No current reservations</td></tr>`;
+                    tbody.innerHTML = `<tr><td colspan="6" style="text-align:center;color:#9b7fe8;padding:20px;">No current reservations</td></tr>`;
                 } else {
                     current.forEach(r => {
                         const timeStr = `${fmtSlot(r.start_time)}-${fmtSlot(r.end_time)}`;
                         const compNo  = String(r.computer_no).padStart(2, '0');
+                        const requestDateTime = fmtRequestDateTime(r.updated_at);
 
                         const tr = document.createElement('tr');
-                        tr.dataset.id      = r._id;
-                        tr.dataset.date    = r.date;
-                        tr.dataset.time    = timeStr;
-                        tr.dataset.lab     = r.lab_name;
-                        tr.dataset.comp    = compNo;
-                        tr.dataset.labId   = r.lab_id;
-                        tr.dataset.compNo  = r.computer_no;
+                        tr.dataset.id        = r._id;
+                        tr.dataset.date      = r.date;
+                        tr.dataset.time      = timeStr;
+                        tr.dataset.lab       = r.lab_name;
+                        tr.dataset.comp      = compNo;
+                        tr.dataset.labId     = r.lab_id;
+                        tr.dataset.compNo    = r.computer_no;
+                        tr.dataset.owner_id   = r.user_id;
+                        tr.dataset.startTime = r.start_time;
+                        tr.dataset.endTime   = r.end_time;
 
                         tr.innerHTML = `
                             <td class="checkbox-cell">
@@ -354,6 +452,7 @@
                             <td>${timeStr}</td>
                             <td>${r.lab_name}</td>
                             <td>${compNo}</td>
+                            <td>${requestDateTime.date}<br>${requestDateTime.time}</td>
                         `;
 
                         // checkbox select/deselect
@@ -361,13 +460,16 @@
                             if (this.checked) {
                                 tr.classList.add('row-selected');
                                 selectedReservations.push({
-                                    id:      tr.dataset.id,
-                                    date:    tr.dataset.date,
-                                    time:    tr.dataset.time,
-                                    lab:     tr.dataset.lab,
-                                    comp:    tr.dataset.comp,
-                                    lab_id:  tr.dataset.labId,
-                                    comp_no: tr.dataset.compNo
+                                    id:         tr.dataset.id,
+                                    date:       tr.dataset.date,
+                                    time:       tr.dataset.time,
+                                    lab:        tr.dataset.lab,
+                                    comp:       tr.dataset.comp,
+                                    lab_id:     tr.dataset.labId,
+                                    comp_no:    tr.dataset.compNo,
+                                    owner_id:   tr.dataset.owner_id,
+                                    start_time: tr.dataset.startTime,
+                                    end_time:   tr.dataset.endTime
                                 });
                             } else {
                                 tr.classList.remove('row-selected');
@@ -385,7 +487,7 @@
             } catch (err) {
                 console.error("Failed to load reservations:", err);
                 document.getElementById('reservations-tbody').innerHTML =
-                    `<tr><td colspan="5" style="text-align:center;color:#c87f7f;padding:20px;">Could not load reservations. Is the server running?</td></tr>`;
+                    `<tr><td colspan="6" style="text-align:center;color:#c87f7f;padding:20px;">Could not load reservations. Is the server running?</td></tr>`;
             }
         }
 
@@ -430,7 +532,7 @@
 
         // ── SORTING ──
         function getColIndex(opt) {
-            return { 'Date': 1, 'Time': 2, 'Lab': 3, 'Computer': 4 }[opt];
+            return { 'Date': 1, 'Time': 2, 'Lab': 3, 'Computer': 4, 'Request Date and Time': 5 }[opt];
         }
         function parseDate(s) { return new Date(s.trim()); }
         function parseTime(s) {
@@ -478,22 +580,20 @@
 
         // ── SIDENAV ──
         (function buildNav() {
-            const uType    = localStorage.getItem('userType') || 'student';
+            const uType    = localStorage.getItem('userType') || sessionStorage.getItem('userType') || 'student';
             const navItems = document.getElementById('nav-items');
             const studentLinks = [
                 { label: 'Home',              href: '/views/student/mainmenu_student.html' },
                 { label: 'Reserve Computer',  href: '/views/student/s-rc-ls.html' },
                 { label: 'Student Search',    href: '/views/student/s-ss.html' },
-                { label: 'View User Profile', href: '/views/student/userprofile_student.html' },
-                { label: 'View Reservations', href: '#', active: true }
+                { label: 'View User Profile', href: '/views/student/userprofile_student.html' }
             ];
             const labtechLinks = [
                 { label: 'Home',                href: '/views/labtech/mainmenu_labtech.html' },
                 { label: 'Manage Reservations', href: '/views/labtech/lt-rc-ls.html' },
                 { label: 'View Reservations',   href: '/views/labtech/lt-vr-ls.html' },
                 { label: 'Student Search',      href: '/views/labtech/lt-ss.html' },
-                { label: 'View User Profile',   href: '/views/labtech/userprofile_labtech.html' },
-                { label: viewStudent ? 'Viewing Student' : 'My Reservations', href: '#', active: true }
+                { label: 'View User Profile',   href: '/views/labtech/userprofile_labtech.html' }
             ];
             const links = uType === 'labtech' ? labtechLinks : studentLinks;
             links.forEach(function (link) {

@@ -577,6 +577,15 @@ input::placeholder {
 	appearance: none;
 }
 
+.date-edit {
+	background: #9a8bcf;
+	border: 3px solid #7962c8;
+	font-family: Nine by Five;
+	font-size: 30px;
+	text-align: center;
+	padding: 5px;
+}
+
 .res-row {
 	display: flex;
 	flex-direction: row;

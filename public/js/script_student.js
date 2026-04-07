@@ -31,7 +31,6 @@ async function loadProfile() {
         document.getElementById("edit-college").value = data.college_code;
         document.getElementById("edit-course").value = data.course_code;
         document.getElementById("edit-bio").value = data.bio;
-        // document.getElementById("edit-profile-img").value = data.profile_img || "default.jpeg";
 
         profilePic.src = `/images/${data.profile_img || "user_picture.png"}`;
     } catch (err) {
@@ -48,7 +47,7 @@ backDelete.onclick = () => containerDelete.classList.remove('active');
 
 // edit profile
 submitEdit.onclick = async () => {
-    let newProfileImg = null; // track uploaded filename
+    let newProfileImg = null;
 
     const fileInput = document.getElementById("edit-profile-img");
     if (fileInput.files.length > 0) {
@@ -62,7 +61,7 @@ submitEdit.onclick = async () => {
             });
             if (!uploadRes.ok) throw new Error("Upload failed");
             const uploadData = await uploadRes.json();
-            newProfileImg = uploadData.profile_img; // filename returned from server
+            newProfileImg = uploadData.profile_img;
             document.getElementById("upload-status").innerText = "Photo uploaded!";
         } catch (err) {
             alert("Photo upload failed. Other changes will still save.");
@@ -77,7 +76,6 @@ submitEdit.onclick = async () => {
         bio: document.getElementById("edit-bio").value,
     };
 
-    // only update profile_img if a new photo was actually uploaded
     if (newProfileImg) updated.profile_img = newProfileImg;
 
     try {
@@ -97,17 +95,31 @@ submitEdit.onclick = async () => {
     }
 };
 
-// delete account
+// delete account — cascade deletes all reservations on the server side
 submitDelete.onclick = async () => {
+    // Disable the button to prevent double-clicks
+    submitDelete.disabled = true;
+    submitDelete.textContent = "Deleting...";
+
     try {
         const res = await fetch(`${API_URL}/${currentStudent._id}`, { method: "DELETE" });
-        if (!res.ok) throw new Error("Delete failed");
-        alert("Account deleted successfully!");
-        containerDelete.classList.remove('active');
+        const data = await res.json();
+
+        if (!res.ok) throw new Error(data.message || "Delete failed");
+
+        // Clear all stored session/local data
+        localStorage.removeItem("user");
+        localStorage.removeItem("userType");
+        sessionStorage.removeItem("user");
+        sessionStorage.removeItem("userType");
+
+        // Redirect to login
         window.location.href = "/views/shared/login.html";
     } catch (err) {
         console.error(err);
-        alert("Failed to delete account.");
+        alert("Failed to delete account. Please try again.");
+        submitDelete.disabled = false;
+        submitDelete.textContent = "Yes, delete my account!";
     }
 };
 

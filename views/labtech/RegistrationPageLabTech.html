@@ -77,7 +77,7 @@
 
                     const isIdFilled      = employeeId.value.trim() !== '';
                     const isEmailFilled   = email.value.trim() !== '';
-                    const isValidEmail    = email.value.includes('@') && email.value.includes('.');
+                    const isValidEmail    = email.value.endsWith('@dlsu.edu.ph');
                     const isPasswordFilled = password.value !== '';
                     const isConfirmFilled = confirmPassword.value !== '';
                     const doPasswordsMatch = password.value === confirmPassword.value;

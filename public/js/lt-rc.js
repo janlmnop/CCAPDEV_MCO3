@@ -270,14 +270,14 @@ function updateCurrentDateTime() {
     const labStart = 8 * 60;
     const labEnd = 20 * 60;
 
+	curDate.textContent = formatDateLabel(now);
+	
     if (currentMinutes < labStart || currentMinutes >= labEnd) {
-        curDate.textContent = "Unavailable";
         curTime.textContent = "Unavailable";
         return;
     }
 
     const startMinutes = getCurrentSlotStart();
-    curDate.textContent = formatDateLabel(now);
     curTime.textContent = `${formatTimeLabel(startMinutes)} - ${formatTimeLabel(startMinutes + 30)}`;
 }
 

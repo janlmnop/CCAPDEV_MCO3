@@ -76,9 +76,6 @@ function timesOverlap(aStart, aEnd, bStart, bEnd) {
 }
 
 // ── DERIVE NAME FROM EMAIL ──
-// Converts firstname_middlenames_lastname@dlsu.edu.ph -> "Firstname Middlenames Lastname"
-// e.g. jay_reyes@dlsu.edu.ph        -> "Jay Reyes"
-//      jay_jackson_reyes@dlsu.edu.ph -> "Jay Jackson Reyes"
 function deriveNameFromEmail(email) {
     if (!email || typeof email !== 'string') return '';
 
@@ -198,8 +195,6 @@ app.post("/api/auth/register/student", async (req, res) => {
         const salt = await bcrypt.genSalt(SALT_WORK_FACTOR);
         const hashedPassword = await bcrypt.hash(password, salt);
 
-        // Use the name sent from the client if provided; otherwise derive it server-side
-        // from the email as a fallback so the feature works even if called via API directly.
         const resolvedName = (name && name.trim() !== '')
             ? name.trim()
             : deriveNameFromEmail(email);
@@ -332,13 +327,26 @@ app.put("/api/students/:id", async (req, res) => {
     }
 });
 
-// DELETE student
+// DELETE student — also removes all their reservations from the database
 // DELETE /api/students/:id
 app.delete("/api/students/:id", async (req, res) => {
     try {
-        const deleted = await Student.findByIdAndDelete(Number(req.params.id));
-        if (!deleted) return res.status(404).json({ message: "Student not found" });
-        res.json({ message: "Student account deleted successfully" });
+        const studentId = Number(req.params.id);
+
+        // First verify the student exists
+        const student = await Student.findById(studentId);
+        if (!student) return res.status(404).json({ message: "Student not found" });
+
+        // Delete ALL reservations belonging to this student (any status)
+        const reservationResult = await Reservation.deleteMany({ user_id: studentId });
+
+        // Delete the student account
+        await Student.findByIdAndDelete(studentId);
+
+        res.json({
+            message: "Student account and all associated reservations deleted successfully.",
+            reservationsDeleted: reservationResult.deletedCount
+        });
     } catch (err) {
         res.status(500).json({ error: err.message });
     }
@@ -401,7 +409,6 @@ app.delete("/api/labtech/:id", async (req, res) => {
 
 // GET availability/lab must be before /availability to avoid route conflict
 // GET available computer counts per lab for a given date + time range
-// used by the left panel in lt-rc-ls.html and s-rc-ls.html
 // GET /api/availability/lab?date=2026-03-21&start_time=0800&end_time=0930
 app.get("/api/availability/lab", async (req, res) => {
     const { date, start_time, end_time } = req.query;
@@ -446,7 +453,6 @@ app.get("/api/availability/lab", async (req, res) => {
 });
 
 // GET taken slots for a specific computer on a specific date
-// used by rc.js to disable already-booked slots in the schedule table
 // GET /api/availability?lab_id=1&computer_no=2&date=2026-03-21
 app.get("/api/availability", async (req, res) => {
     const { lab_id, computer_no, date } = req.query;
@@ -469,7 +475,6 @@ app.get("/api/availability", async (req, res) => {
             status:      "active"
         });
 
-        // collect all taken slot strings
         const takenSlots = [];
         reservations.forEach(r => {
             generateSlots(r.start_time, r.end_time).forEach(slot => {
@@ -484,7 +489,6 @@ app.get("/api/availability", async (req, res) => {
 });
 
 // GET all reservations for a user
-// enriched with lab name, computer number, and slots array
 // GET /api/reservations/:userId
 app.get("/api/reservations/:userId", async (req, res) => {
     try {
@@ -497,7 +501,6 @@ app.get("/api/reservations/:userId", async (req, res) => {
                 ...r.toObject(),
                 lab_name:    lab      ? lab.room_name        : "Unknown",
                 computer_no: computer ? computer.computer_no : "?",
-                // slots array expected by reservations_current/past.html
                 slots: generateSlots(r.start_time, r.end_time)
             };
         }));
@@ -595,7 +598,6 @@ app.put("/api/reservation/:id", async (req, res) => {
 });
 
 // FIND a reservation by lab_id + computer_no + date + start_time
-// used by lt-vr rc.js to get the reservation _id before deleting it
 // GET /api/reservation/find?lab_id=1&computer_no=2&date=2026-03-21&start_time=0800
 app.get("/api/reservation/find", async (req, res) => {
     const { lab_id, computer_no, date, start_time } = req.query;
@@ -612,7 +614,6 @@ app.get("/api/reservation/find", async (req, res) => {
         if (!computer)
             return res.status(404).json({ message: "Computer not found." });
 
-        // find active reservation whose time range contains the given start_time slot
         const reservations = await Reservation.find({
             computer_id: computer._id,
             date:        date,
@@ -632,7 +633,7 @@ app.get("/api/reservation/find", async (req, res) => {
     }
 });
 
-// DELETE reservation
+// DELETE reservation (soft delete — marks as "deleted")
 // DELETE /api/reservation/:id
 app.delete("/api/reservation/:id", async (req, res) => {
     try {
@@ -704,7 +705,6 @@ app.get("/api/labs/availability", async (req, res) => {
     try {
         const { date, start_time, end_time } = req.query;
 		
-		// get all overlapping reservations
         const reservations = await Reservation.find({
             date: date,
             status: "active",
@@ -720,8 +720,6 @@ app.get("/api/labs/availability", async (req, res) => {
             5: 10
         };
 		
-		// compute lab id from comp id
-		// subtract reserved comps from total available per lab
         for (let compId = 1; compId <= 50; compId++) {
             const hasReservation = reservations.some(function (reservation) {
                 return reservation.computer_id === compId;
@@ -735,7 +733,6 @@ app.get("/api/labs/availability", async (req, res) => {
 
         const result = [];
 		
-		// get total counts per lab
         for (let lab = 1; lab <= 5; lab++) {
             result[lab - 1] = {
                 lab_id: lab,
@@ -806,7 +803,6 @@ app.get("/api/comps/availability", async (req, res) => {
     try {
         const { lab_id, date, start_time, end_time } = req.query;
 		
-		// get all overlapping reservations
         const reservations = await Reservation.find({
             lab_id: Number(lab_id),
             date: date,
@@ -817,7 +813,6 @@ app.get("/api/comps/availability", async (req, res) => {
 
         const result = [];
 		
-		// check each comp in lab if avail
         for (let comp = 1; comp <= 10; comp++) {
             const computerId = (Number(lab_id) - 1) * 10 + comp;
 
@@ -879,7 +874,6 @@ app.get("/api/comps/reservations", async (req, res) => {
     try {
         const { lab_id, computer_id, date } = req.query;
 		
-		// get all applicable reservations
         const reservations = await Reservation.find({
             lab_id: Number(lab_id),
             computer_id: Number(computer_id),
@@ -887,7 +881,6 @@ app.get("/api/comps/reservations", async (req, res) => {
             status: "active"
         }).sort({ start_time: 1 });
 		
-		// get user id of each reservation
         const userIds = reservations.map(function (reservation) {
             return reservation.user_id;
         });
@@ -902,7 +895,6 @@ app.get("/api/comps/reservations", async (req, res) => {
             studentMap[student._id] = student;
         });
 		
-		// check if reservation is anonymous
         const result = reservations.map(function (reservation) {
 			let reservedBy = "Reserved";
 
@@ -952,7 +944,6 @@ app.post("/api/reservations", async (req, res) => {
             is_anonymous
         } = req.body;
 
-        // check for missing input
         if (!user_id || !lab_id || !computer_id || !date || !start_time || !end_time) {
             return res.status(400).json({
                 message: "Missing required reservation fields"
@@ -963,7 +954,6 @@ app.post("/api/reservations", async (req, res) => {
         const parsedLabId = Number(lab_id);
         const parsedComputerId = Number(computer_id);
 
-        // check for invalid numeric fields
         if (
             !Number.isInteger(parsedUserId) ||
             !Number.isInteger(parsedLabId) ||
@@ -974,7 +964,6 @@ app.post("/api/reservations", async (req, res) => {
             });
         }
 
-        // check if user exists
         const studentExists = await Student.findById(parsedUserId);
 
         if (!studentExists) {
@@ -983,7 +972,6 @@ app.post("/api/reservations", async (req, res) => {
             });
         }
 
-        // check if lab exists
         const labExists = await Lab.findById(parsedLabId);
 
         if (!labExists) {
@@ -992,7 +980,6 @@ app.post("/api/reservations", async (req, res) => {
             });
         }
 
-        // check if computer exists
         const computerExists = await Computer.findById(parsedComputerId);
 
         if (!computerExists) {
@@ -1001,14 +988,12 @@ app.post("/api/reservations", async (req, res) => {
             });
         }
 
-        // check if computer belongs to selected lab
         if (Number(computerExists.lab_id) !== parsedLabId) {
             return res.status(400).json({
                 message: "Selected computer does not belong to the selected laboratory"
             });
         }
 
-        // in case of trying to reserve the same slot as smn almost at the same time
         const overlappingReservation = await Reservation.findOne({
             lab_id: parsedLabId,
             computer_id: parsedComputerId,
@@ -1024,7 +1009,6 @@ app.post("/api/reservations", async (req, res) => {
             });
         }
 
-        // increment id
         const latestReservation = await Reservation.findOne().sort({ _id: -1 });
         let nextId = 1;
 
@@ -1034,7 +1018,6 @@ app.post("/api/reservations", async (req, res) => {
 
         const now = new Date().toISOString();
 
-        // create and save reservation
         const newReservation = new Reservation({
             _id: nextId,
             user_id: parsedUserId,

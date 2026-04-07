@@ -317,17 +317,23 @@
         const editBtn   = document.getElementById('editBtn');
         const deleteBtn = document.getElementById('deleteBtn');
 
+        const viewingOther = userType === 'student' && viewStudent && String(viewStudent) !== String(loggedInUser._id);
+        if (viewingOther) {
+            editBtn.style.display = "none";
+            deleteBtn.style.display = "none";
+        }
+
         function updateActionBtns() {
             const hasSelection = selectedReservations.length > 0;
             let canManage = hasSelection;
             let hideButtons = false;
 
-            // if student, check if user owns the reservations to enable edit/delete
-            if (hasSelection && userType === 'student') {
-                const isOwner = selectedReservations.every(r => String(r.owner_id) === String(loggedInUser._id));
-
-                canManage = isOwner;
-                hideButtons = !isOwner;
+            // if student, check if viewing other profile
+            const ViewingOther = userType === 'student' && viewStudent;
+            
+            if (ViewingOther) {
+            	canManage = false;
+            	hideButtons = true;
             }
         
             editBtn.disabled = !canManage;

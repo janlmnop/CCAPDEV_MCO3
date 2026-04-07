@@ -1260,12 +1260,14 @@ if (editBtn) {
 
 if (returnBtn) {
     returnBtn.addEventListener("click", function () {
-        const backUrl = buildLtReservationUrl("lt-vr-cs-c.html", {
-            lab: getSelectedLab(),
-            comp: getSelectedComp()
-        });
-
-        window.location.href = backUrl;
+        if (document.referrer) {
+            window.history.back();
+        } else {
+            window.location.href = buildLtReservationUrl("lt-vr-cs-c.html", {
+                lab: getSelectedLab(),
+                comp: getSelectedComp()
+            });
+        }
     });
 }
 
@@ -1370,13 +1372,15 @@ if (yesBtn) {
                 alert(updateData.message || "Reservation updated successfully.");
                 closeConfirmPopup();
 
-                const backUrl = buildLtReservationUrl("lt-vr-cs-c.html", {
-                    lab: getSelectedLab(),
-                    comp: getSelectedComp()
-                });
-
-                window.location.href = backUrl;
-                return;
+				if (document.referrer) {
+				    window.history.back();
+				} else {
+				    window.location.href = buildLtReservationUrl("lt-vr-cs-c.html", {
+				        lab: getSelectedLab(),
+				        comp: getSelectedComp()
+				    });
+				}
+				return;
             }
 
             if (isViewReservationPage) {

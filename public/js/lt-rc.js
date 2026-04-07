@@ -273,7 +273,7 @@ function updateCurrentDateTime() {
 	curDate.textContent = formatDateLabel(now);
 	
     if (currentMinutes < labStart || currentMinutes >= labEnd) {
-        curTime.textContent = "Unavailable";
+        curTime.textContent = "Labs are closed for the day.";
         return;
     }
 
@@ -1700,13 +1700,12 @@ async function loadOngoingLabReservations() {
         if (!curDate || !curTime) return;
 
         if (
-            curDate.textContent.trim() === "Unavailable" ||
-            curTime.textContent.trim() === "Unavailable"
+            curTime.textContent.trim() === "Labs are closed for the day."
         ) {
             for (let lab = 1; lab <= 5; lab++) {
                 const labText = document.getElementById(`lab${lab}-ongoing`);
                 if (labText) {
-                    labText.textContent = "Unavailable";
+                    labText.textContent = "None";
                 }
             }
             return;
@@ -1757,10 +1756,9 @@ async function loadOngoingComputerReservations() {
         if (!labId || !curDate || !curTime || !ongoingComputers) return;
 
         if (
-            curDate.textContent.trim() === "Unavailable" ||
-            curTime.textContent.trim() === "Unavailable"
+            curTime.textContent.trim() === "Labs are closed for the day."
         ) {
-            ongoingComputers.textContent = "Unavailable";
+            ongoingComputers.textContent = "None";
             return;
         }
 

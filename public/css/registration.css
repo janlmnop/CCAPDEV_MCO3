@@ -228,7 +228,20 @@ body {
     cursor: pointer;
 }
 
+.register {
+    margin-top: -35px;
+    z-index: 11;
+    display: none;
+    transition: all 0.3s ease;
+}
 
+.register img {
+    display: block;
+    width: 450px; 
+    height: auto;
+    margin-left: 8px;
+    cursor: pointer;
+}
 
 
 
